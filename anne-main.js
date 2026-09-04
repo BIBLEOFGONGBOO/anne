@@ -140,63 +140,94 @@ const SUPABASE_CONFIG = {
 
 
 // SUBBLOCK 0201
-async function fetchTranslations() {
+// ============================================================
+// Supabase 필요한 데이터만 조회
+// ============================================================
 
-  const PAGE_SIZE = 1000;
+async function fetchTranslations(options) {
 
-  let from = 0;
+  options =
+    options || {};
 
-  let allRows = [];
+  var select =
+    options.select || '*';
+
+  var filters =
+    options.filters || '';
+
+  var url =
+    SUPABASE_CONFIG.url +
+    '/rest/v1/' +
+    SUPABASE_CONFIG.table +
+    '?select=' +
+    encodeURIComponent(select);
+
+  if (filters) {
+    url += '&' + filters;
+  }
+
+  var allRows = [];
+
+  var from = 0;
+
+  var PAGE_SIZE = 1000;
+
 
   while (true) {
 
-    const to =
-      from + PAGE_SIZE - 1;
+    var to =
+      from +
+      PAGE_SIZE -
+      1;
 
-    const url =
-      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}` +
-      `?select=*`;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_CONFIG.anonKey,
-        'Accept': 'application/json',
-        'Range': `${from}-${to}`,
-        'Range-Unit': 'items'
-      }
-    });
+    var response =
+      await fetch(
+        url,
+        {
+          method: 'GET',
 
-    const text =
+          headers: {
+            'apikey':
+              SUPABASE_CONFIG.anonKey,
+
+            'Accept':
+              'application/json',
+
+            'Range':
+              from + '-' + to,
+
+            'Range-Unit':
+              'items'
+          }
+        }
+      );
+
+
+    var text =
       await response.text();
 
-    console.log(
-      '[SUPABASE] page:',
-      from,
-      '-',
-      to,
-      'status:',
-      response.status
-    );
 
     if (!response.ok) {
+
       throw new Error(
-        `Supabase Error ${response.status}: ${text}`
+        'Supabase Error ' +
+        response.status +
+        ': ' +
+        text
       );
     }
 
-    const rows =
+
+    var rows =
       text
         ? JSON.parse(text)
         : [];
 
+
     allRows =
       allRows.concat(rows);
 
-    console.log(
-      '[SUPABASE] loaded:',
-      allRows.length
-    );
 
     if (
       rows.length <
@@ -205,43 +236,65 @@ async function fetchTranslations() {
       break;
     }
 
+
     from +=
       PAGE_SIZE;
   }
 
+
   console.log(
-    '[SUPABASE] total rows:',
+    '[SUPABASE] loaded:',
     allRows.length
   );
+
 
   return allRows;
 }
 
-
 // SUBBLOCK 0202
+// ============================================================
+// Supabase rows → ANNE questions
+// ============================================================
+
 function convertToQuestions(rows) {
 
-  const questions = [];
-  const groups = {};
+  var questions = [];
 
-  for (const row of rows) {
+  var groups = {};
 
-    if (!row) continue;
 
-    // Supabase CSV 컬럼
-    const contentId =
+  for (
+    var i = 0;
+    i < rows.length;
+    i++
+  ) {
+
+    var row =
+      rows[i];
+
+
+    if (!row) {
+      continue;
+    }
+
+
+    var contentId =
       String(
         row.CONTENT_ID ??
         row.content_id ??
         ''
       ).trim();
 
-    const lang =
+
+    var lang =
       String(
         row.LANGUAGE ??
         row.language ??
         ''
-      ).trim();
+      )
+      .trim()
+      .toUpperCase();
+
 
     if (
       !contentId ||
@@ -250,25 +303,33 @@ function convertToQuestions(rows) {
       continue;
     }
 
-    if (!groups[contentId]) {
-      groups[contentId] = {};
+
+    if (
+      !groups[contentId]
+    ) {
+
+      groups[contentId] =
+        {};
     }
 
-    const langMap = {
+
+    var langMap = {
       EN: 'en',
       ENG: 'en',
+
       KO: 'ko',
       KOR: 'ko',
+
       JP: 'ja',
-      JPN: 'ja',
-      JA: 'ja'
+      JA: 'ja',
+      JPN: 'ja'
     };
 
-    const mappedLang =
-      langMap[
-        lang.toUpperCase()
-      ] ||
+
+    var mappedLang =
+      langMap[lang] ||
       lang.toLowerCase();
+
 
     groups[contentId][mappedLang] = {
 
@@ -358,202 +419,533 @@ function convertToQuestions(rows) {
   }
 
 
-  let id = 1;
+  var id = 1;
 
-  const validLangs = [
+
+  var validLangs = [
     'en',
     'ko',
     'ja'
   ];
 
 
-  for (
-    const [contentId, translations]
-    of Object.entries(groups)
-  ) {
+  Object.entries(
+    groups
+  ).forEach(
+    function(entry) {
 
-    const parts =
-      contentId.split('_');
+      var contentId =
+        entry[0];
 
-    let answer = 0;
-
-    if (translations.en) {
-      answer =
-        parseInt(
-          translations.en.answer
-        ) || 0;
-    }
-
-    if (
-      answer === 0 &&
-      translations.ko
-    ) {
-      answer =
-        parseInt(
-          translations.ko.answer
-        ) || 0;
-    }
-
-    if (
-      answer === 0 &&
-      translations.ja
-    ) {
-      answer =
-        parseInt(
-          translations.ja.answer
-        ) || 0;
-    }
+      var translations =
+        entry[1];
 
 
-    const license_question_translations =
-      [];
+      var parts =
+        contentId.split('_');
 
 
-    for (const lang of validLangs) {
+      var answer = 0;
 
-      if (!translations[lang]) {
-        continue;
+
+      if (
+        translations.en
+      ) {
+
+        answer =
+          parseInt(
+            translations.en.answer
+          ) || 0;
       }
 
-      license_question_translations.push({
 
-        language_code: lang,
+      if (
+        answer === 0 &&
+        translations.ko
+      ) {
 
-        passage:
-          translations[lang].passage,
+        answer =
+          parseInt(
+            translations.ko.answer
+          ) || 0;
+      }
 
-        question_text:
-          translations[lang].question_text,
 
-        option_1:
-          translations[lang].option_1,
+      if (
+        answer === 0 &&
+        translations.ja
+      ) {
 
-        option_2:
-          translations[lang].option_2,
+        answer =
+          parseInt(
+            translations.ja.answer
+          ) || 0;
+      }
 
-        option_3:
-          translations[lang].option_3,
 
-        option_4:
-          translations[lang].option_4,
+      var questionTranslations =
+        [];
 
-        explanation:
-          translations[lang].explanation,
 
-        chunk_1:
-          translations[lang].chunks[0] || '',
+      validLangs.forEach(
+        function(lang) {
 
-        chunk_2:
-          translations[lang].chunks[1] || '',
+          if (
+            !translations[lang]
+          ) {
+            return;
+          }
 
-        chunk_3:
-          translations[lang].chunks[2] || '',
 
-        chunk_4:
-          translations[lang].chunks[3] || '',
+          questionTranslations.push({
 
-        chunk_5:
-          translations[lang].chunks[4] || ''
-      });
+            language_code:
+              lang,
+
+            passage:
+              translations[lang].passage,
+
+            question_text:
+              translations[lang].question_text,
+
+            option_1:
+              translations[lang].option_1,
+
+            option_2:
+              translations[lang].option_2,
+
+            option_3:
+              translations[lang].option_3,
+
+            option_4:
+              translations[lang].option_4,
+
+            explanation:
+              translations[lang].explanation,
+
+            chunk_1:
+              translations[lang].chunks[0] || '',
+
+            chunk_2:
+              translations[lang].chunks[1] || '',
+
+            chunk_3:
+              translations[lang].chunks[2] || '',
+
+            chunk_4:
+              translations[lang].chunks[3] || '',
+
+            chunk_5:
+              translations[lang].chunks[4] || ''
+          });
+
+        }
+      );
+
+
+      if (
+        questionTranslations.length
+      ) {
+
+        questions.push({
+
+          id:
+            id++,
+
+          category:
+            parts[0] ||
+            'ANNE',
+
+          date:
+            parts[1] ||
+            '',
+
+          contentId:
+            contentId,
+
+          answer:
+            answer,
+
+          license_question_translations:
+            questionTranslations
+        });
+      }
+
     }
+  );
 
 
-    if (
-      license_question_translations.length
-      > 0
-    ) {
+  // CONTENT_ID의 마지막 번호 기준 정렬
+  questions.sort(
+    function(a, b) {
 
-      questions.push({
+      var aNum =
+        Number(
+          String(
+            a.contentId || ''
+          ).split('_').pop()
+        );
 
-        id: id++,
+      var bNum =
+        Number(
+          String(
+            b.contentId || ''
+          ).split('_').pop()
+        );
 
-        category:
-          parts[0] || 'ANNE',
 
-        date:
-          parts[1] || '',
+      if (
+        a.date !== b.date
+      ) {
 
-        answer: answer,
+        return String(
+          a.date
+        ).localeCompare(
+          String(
+            b.date
+          )
+        );
+      }
 
-        license_question_translations:
-          license_question_translations
-      });
+
+      return aNum - bNum;
     }
-  }
+  );
 
 
   return questions;
 }
 
 // SUBBLOCK 0203
+// ============================================================
+// Catalog는 CONTENT_ID만
+// 실제 문제는 필요한 SET만 Supabase 조회
+// ============================================================
+
 async function apiData(p) {
+
   try {
-    const rows = await fetchTranslations();
-    const allQuestions = convertToQuestions(rows);
-    window.__anneData = allQuestions;
-    if (p?.action === 'catalog') {
-      const dateMap = {};
-      allQuestions.forEach(q => {
-        const dateKey = q.date || 'No Date';
-        if (!dateMap[dateKey]) dateMap[dateKey] = [];
-        dateMap[dateKey].push(q);
-      });
-      const dateSets = Object.keys(dateMap).sort().map(date => ({
-        date: date,
-        count: dateMap[date].length
-      }));
+
+    // ========================================================
+    // CATALOG
+    //
+    // 전체 18,705행을 받지 않는다.
+    // EN 행의 CONTENT_ID만 읽음.
+    // 약 6,235개의 아주 작은 데이터만 받음.
+    // ========================================================
+
+    if (
+      p &&
+      p.action ===
+      'catalog'
+    ) {
+
+      var catalogRows =
+        await fetchTranslations({
+
+          select:
+            'CONTENT_ID',
+
+          filters:
+            'LANGUAGE=eq.EN' +
+            '&order=CONTENT_ID.asc'
+        });
+
+
+      var dateMap =
+        {};
+
+
+      catalogRows.forEach(
+        function(row) {
+
+          var contentId =
+            String(
+              row.CONTENT_ID ||
+              ''
+            );
+
+
+          if (!contentId) {
+            return;
+          }
+
+
+          var parts =
+            contentId.split('_');
+
+
+          var date =
+            parts[1] ||
+            'No Date';
+
+
+          if (
+            !dateMap[date]
+          ) {
+
+            dateMap[date] =
+              0;
+          }
+
+
+          dateMap[date]++;
+        }
+      );
+
+
+      var dateSets =
+        Object.keys(
+          dateMap
+        )
+        .sort()
+        .map(
+          function(date) {
+
+            return {
+              date: date,
+              count:
+                dateMap[date]
+            };
+
+          }
+        );
+
+
       return {
+
         products: [{
-          product_code: 'anne',
-          total_question_count: allQuestions.length,
-          dates: dateSets
+          product_code:
+            'anne',
+
+          total_question_count:
+            catalogRows.length,
+
+          dates:
+            dateSets
         }],
-        total: allQuestions.length,
-        access: 'full'
+
+        total:
+          catalogRows.length,
+
+        access:
+          'full'
       };
     }
-    const offset = Math.max(0, Number(p?.offset) || 0);
-    const limit = Math.max(1, Number(p?.limit) || allQuestions.length);
-    const sliced = allQuestions.slice(offset, offset + limit);
-    return { data: sliced, access: 'full', total: allQuestions.length };
-  } catch (error) {
-    console.error('Google Sheets API Error:', error);
-    if (window.__anneData) {
-      console.log('📦 캐시된 데이터 사용');
-      const cached = window.__anneData;
-      if (p?.action === 'catalog') {
-        const dateMap = {};
-        cached.forEach(q => {
-          const dateKey = q.date || 'No Date';
-          if (!dateMap[dateKey]) dateMap[dateKey] = [];
-          dateMap[dateKey].push(q);
-        });
-        const dateSets = Object.keys(dateMap).sort().map(date => ({
-          date: date,
-          count: dateMap[date].length
-        }));
-        return {
-          products: [{ product_code: 'anne', total_question_count: cached.length, dates: dateSets }],
-          total: cached.length,
-          access: 'full'
-        };
+
+
+    // ========================================================
+    // QUESTIONS
+    //
+    // offset / limit으로 현재 필요한 날짜 계산
+    // ========================================================
+
+    var dates =
+      window.__currentDates ||
+      [];
+
+
+    var offset =
+      Math.max(
+        0,
+        Number(
+          p && p.offset
+        ) || 0
+      );
+
+
+    var limit =
+      Math.max(
+        1,
+        Number(
+          p && p.limit
+        ) || 1
+      );
+
+
+    var startQuestion =
+      offset;
+
+
+    var endQuestion =
+      offset +
+      limit;
+
+
+    var running =
+      0;
+
+
+    var selectedDates =
+      [];
+
+
+    for (
+      var i = 0;
+      i < dates.length;
+      i++
+    ) {
+
+      var dateStart =
+        running;
+
+
+      var dateEnd =
+        running +
+        dates[i].count;
+
+
+      if (
+        dateEnd >
+        startQuestion &&
+        dateStart <
+        endQuestion
+      ) {
+
+        selectedDates.push(
+          dates[i].date
+        );
       }
-      const offset = Math.max(0, Number(p?.offset) || 0);
-      const limit = Math.max(1, Number(p?.limit) || cached.length);
-      return { data: cached.slice(offset, offset + limit), access: 'full', total: cached.length };
+
+
+      running =
+        dateEnd;
+
+
+      if (
+        running >=
+        endQuestion
+      ) {
+        break;
+      }
     }
+
+
+    if (
+      !selectedDates.length
+    ) {
+
+      return {
+        data: [],
+        access: 'full',
+        total: 0
+      };
+    }
+
+
+    console.log(
+      '[SUPABASE] loading SETS:',
+      selectedDates
+    );
+
+
+    // ========================================================
+    // CONTENT_ID:
+    //
+    // ANNE_1942-06-12_1
+    // ANNE_1942-06-12_2
+    //
+    // 선택 날짜 prefix만 조회
+    // ========================================================
+
+    var orParts =
+      selectedDates.map(
+        function(date) {
+
+          return (
+            'CONTENT_ID.like.ANNE_' +
+            date +
+            '_%'
+          );
+
+        }
+      );
+
+
+    var filters =
+      'or=(' +
+      orParts.join(',') +
+      ')' +
+      '&order=CONTENT_ID.asc';
+
+
+    var rows =
+      await fetchTranslations({
+
+        select:
+          'CONTENT_ID,LANGUAGE,PASSAGE,QUESTION,OPTION1,OPTION2,OPTION3,OPTION4,ANSWER,EXPLANATION,CHUNK1,CHUNK2,CHUNK3,CHUNK4,CHUNK5',
+
+        filters:
+          filters
+      });
+
+
+    var questions =
+      convertToQuestions(
+        rows
+      );
+
+
+    console.log(
+      '[SUPABASE] questions loaded:',
+      questions.length
+    );
+
+
+    return {
+
+      data:
+        questions,
+
+      access:
+        'full',
+
+      total:
+        questions.length
+    };
+
+
+  } catch (error) {
+
+    console.error(
+      'Supabase API Error:',
+      error
+    );
+
     throw error;
   }
 }
 
 // SUBBLOCK 0204
-async function loadData(code, offset = 0, limit = 150) {
+// ============================================================
+// 필요한 SET 범위만 Supabase에서 로딩
+// ============================================================
+
+async function loadData(
+  code,
+  offset = 0,
+  limit = 150
+) {
+
   return apiData({
-    action: 'questions',
-    product: code,
-    languages: ['en', 'ko', 'ja'],
-    limit: limit,
-    offset: offset
+
+    action:
+      'questions',
+
+    product:
+      code,
+
+    languages: [
+      'en',
+      'ko',
+      'ja'
+    ],
+
+    limit:
+      limit,
+
+    offset:
+      offset
   });
 }
 
