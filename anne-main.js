@@ -849,17 +849,17 @@ async function apiData(p) {
     // ========================================================
 
     var orParts =
-      selectedDates.map(
-        function(date) {
+  selectedDates.map(
+    function(date) {
 
-          return (
-            'CONTENT_ID.like.ANNE_' +
-            date +
-            '_%'
-          );
-
-        }
+      return (
+        'CONTENT_ID.like.ANNE_' +
+        date +
+        '_*'
       );
+
+    }
+  );
 
 
     var filters =
