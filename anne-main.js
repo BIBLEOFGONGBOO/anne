@@ -3390,6 +3390,9 @@ var _anneMicRecognizeTimer = null;
 var _anneMicLastTranscript = '';
 var _anneMicCurrentRecognition = null;
 
+var _anneMicFinalTranscript = '';
+var _anneMicInterimTranscript = '';
+
 window.__micRecognizeDelay =
   Number(
     localStorage.getItem(
@@ -4551,9 +4554,16 @@ function startAnneRecognition() {
 
 
       var spokenText =
-        String(
-          _anneMicLastTranscript || ''
-        ).trim();
+  (
+    _anneMicFinalTranscript +
+    ' ' +
+    _anneMicInterimTranscript
+  )
+    .replace(
+      /\s+/g,
+      ' '
+    )
+    .trim();
 
 
       if (!spokenText) {
