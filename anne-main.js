@@ -3373,7 +3373,7 @@ console.log('[ANNE] ✅ NAV 버튼 이벤트 바인딩 완료');
 // 기준 이상 → PASS → 다음 문장
 // ============================================================
 
-var SpeechRecognition =
+var Speech =
   window.SpeechRecognition ||
   window.webkitSpeechRecognition;
 
@@ -3825,6 +3825,23 @@ function ensureAnneMicPanel() {
     >
       Ready
     </div>
+    <button
+  id="anneMicRecognize"
+  type="button"
+  style="
+    width:100%;
+    margin-top:8px;
+    padding:7px 10px;
+    border:1px solid #2563eb;
+    border-radius:7px;
+    background:#2563eb;
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+  "
+>
+  Recognize
+</button>
 
   `;
 
@@ -3887,7 +3904,51 @@ function ensureAnneMicPanel() {
       };
   }
 
+var recognizeBtn =
+  document.getElementById(
+    'anneMicRecognize'
+  );
 
+if (recognizeBtn) {
+
+  recognizeBtn.onclick =
+    function() {
+
+      if (
+        !ANNE_STATE.micMode ||
+        !ANNE_STATE.recognition
+      ) {
+        return;
+      }
+
+      var scoreEl =
+        document.getElementById(
+          'anneMicScore'
+        );
+
+      if (scoreEl) {
+
+        scoreEl.textContent =
+          'Recognizing...';
+
+        scoreEl.style.color =
+          '#2563eb';
+      }
+
+      try {
+
+        // 지금까지 들은 발화까지만 최종 인식하도록 요청
+        ANNE_STATE.recognition.stop();
+
+      } catch (e) {
+
+        console.warn(
+          '[MIC] Recognize stop failed:',
+          e
+        );
+      }
+    };
+}
   return panel;
 }
 
