@@ -4137,21 +4137,15 @@ function highlightAnneMicWords(
     return;
   }
 
-  var original =
-    String(sentence.text || '');
-
-  var spoken =
-    String(spokenText || '');
-
   var originalWords =
-    original.match(
-      /\S+/g
-    ) || [];
+    String(sentence.text || '')
+      .split(/\s+/)
+      .filter(Boolean);
 
   var spokenWords =
-    spoken.match(
-      /\S+/g
-    ) || [];
+    String(spokenText || '')
+      .split(/\s+/)
+      .filter(Boolean);
 
   var normalizedSpoken =
     spokenWords.map(
@@ -4163,38 +4157,44 @@ function highlightAnneMicWords(
       }
     );
 
-  var used =
-    new Array(
-      normalizedSpoken.length
-    ).fill(false);
-
   sentence.element.innerHTML = '';
+
+  var spokenIndex = 0;
 
   originalWords.forEach(
     function(word, index) {
 
-      var normalizedWord =
+      var normalizedOriginal =
         normalizeAnneMicText(
           word,
           sentence.code
         );
 
-      var matchedIndex = -1;
+      var matched = false;
 
       for (
-        var i = 0;
-        i < normalizedSpoken.length;
-        i++
+        var lookAhead = 0;
+        lookAhead <= 4;
+        lookAhead++
       ) {
 
+        var testIndex =
+          spokenIndex +
+          lookAhead;
+
         if (
-          !used[i] &&
-          normalizedWord &&
-          normalizedWord ===
-          normalizedSpoken[i]
+          testIndex <
+            normalizedSpoken.length &&
+          normalizedOriginal &&
+          normalizedOriginal ===
+            normalizedSpoken[testIndex]
         ) {
 
-          matchedIndex = i;
+          matched = true;
+
+          spokenIndex =
+            testIndex + 1;
+
           break;
         }
       }
@@ -4207,12 +4207,7 @@ function highlightAnneMicWords(
       span.textContent =
         word;
 
-      if (
-        matchedIndex >= 0
-      ) {
-
-        used[matchedIndex] =
-          true;
+      if (matched) {
 
         span.style.background =
           '#fde047';
@@ -4234,9 +4229,7 @@ function highlightAnneMicWords(
       ) {
 
         sentence.element.appendChild(
-          document.createTextNode(
-            ' '
-          )
+          document.createTextNode(' ')
         );
       }
     }
