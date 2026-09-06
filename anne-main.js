@@ -4750,25 +4750,11 @@ function startAnneRecognition() {
     };
 
 
-  try {
+ try {
 
-    recognition.start();
+  recognition.start();
 
-    var scoreEl =
-      document.getElementById(
-        'anneMicScore'
-      );
-
-    if (scoreEl) {
-
-      scoreEl.textContent =
-        'Listening...';
-
-      scoreEl.style.color =
-        '#2563eb';
-    }
-
-  } catch (e) {
+} catch (e) {
 
     console.warn(
       '[MIC] 시작 실패:',
