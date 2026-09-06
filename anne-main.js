@@ -4210,13 +4210,19 @@ function highlightAnneMicWords(
       if (matched) {
 
         span.style.background =
-          '#fde047';
+  '#ffeb3b';
 
-        span.style.borderRadius =
-          '3px';
+span.style.color =
+  '#000';
 
-        span.style.padding =
-          '0 2px';
+span.style.borderRadius =
+  '3px';
+
+span.style.padding =
+  '1px 3px';
+
+span.style.boxShadow =
+  'inset 0 -2px 0 rgba(0,0,0,0.08)';
       }
 
       sentence.element.appendChild(
