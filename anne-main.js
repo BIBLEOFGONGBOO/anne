@@ -3392,7 +3392,7 @@ document.addEventListener('keydown', function(e) {
 
 console.log('[ANNE] ✅ NAV 버튼 이벤트 바인딩 완료');
 
-const ANNE_BUILD = '20260906-03';
+const ANNE_BUILD = '20260906-04';
 
 // ============================================================
 // BLOCK 1100: anne-mic.js
