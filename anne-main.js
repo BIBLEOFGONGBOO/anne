@@ -3392,7 +3392,7 @@ document.addEventListener('keydown', function(e) {
 
 console.log('[ANNE] ✅ NAV 버튼 이벤트 바인딩 완료');
 
-const ANNE_BUILD = '20260906-04';
+const ANNE_BUILD = '20260906-05';
 
 // ============================================================
 // BLOCK 1100: anne-mic.js
@@ -4131,26 +4131,82 @@ function highlightAnneMicWords(
   spokenText
 ) {
 
-  if (
-    !sentence ||
-    !sentence.element
-  ) {
+  if (!sentence) {
     return;
   }
 
+  var targetText =
+    normalizeAnneMicText(
+      sentence.text,
+      sentence.code
+    );
+
+  var visibleLines =
+    Array.from(
+      document.querySelectorAll(
+        '.anne-full-diary ' +
+        '.language-line[data-language="' +
+        sentence.code +
+        '"]'
+      )
+    );
+
+  var sentenceEl =
+    visibleLines.find(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        if (
+          rect.width <= 0 ||
+          rect.height <= 0
+        ) {
+          return false;
+        }
+
+        var lineText =
+          normalizeAnneMicText(
+            el.textContent,
+            sentence.code
+          );
+
+        return (
+          lineText ===
+          targetText
+        );
+      }
+    );
+
+  if (!sentenceEl) {
+    sentenceEl =
+      sentence.element;
+  }
+
+  if (!sentenceEl) {
+    return;
+  }
+
+  var original =
+    String(
+      sentenceEl.textContent || ''
+    );
+
+  var spoken =
+    String(
+      spokenText || ''
+    );
+
   var originalWords =
-    String(sentence.text || '')
-      .split(/\s+/)
-      .filter(Boolean);
+    original.match(/\S+/g) || [];
 
   var spokenWords =
-    String(spokenText || '')
-      .split(/\s+/)
-      .filter(Boolean);
+    spoken.match(/\S+/g) || [];
 
   var normalizedSpoken =
     spokenWords.map(
       function(word) {
+
         return normalizeAnneMicText(
           word,
           sentence.code
@@ -4158,44 +4214,38 @@ function highlightAnneMicWords(
       }
     );
 
-  sentence.element.innerHTML = '';
+  var used =
+    new Array(
+      normalizedSpoken.length
+    ).fill(false);
 
-  var spokenIndex = 0;
+  sentenceEl.innerHTML = '';
 
   originalWords.forEach(
     function(word, index) {
 
-      var normalizedOriginal =
+      var normalizedWord =
         normalizeAnneMicText(
           word,
           sentence.code
         );
 
-      var matched = false;
+      var matchedIndex = -1;
 
       for (
-        var lookAhead = 0;
-        lookAhead <= 4;
-        lookAhead++
+        var i = 0;
+        i < normalizedSpoken.length;
+        i++
       ) {
 
-        var testIndex =
-          spokenIndex +
-          lookAhead;
-
         if (
-          testIndex <
-            normalizedSpoken.length &&
-          normalizedOriginal &&
-          normalizedOriginal ===
-            normalizedSpoken[testIndex]
+          !used[i] &&
+          normalizedWord &&
+          normalizedWord ===
+            normalizedSpoken[i]
         ) {
 
-          matched = true;
-
-          spokenIndex =
-            testIndex + 1;
-
+          matchedIndex = i;
           break;
         }
       }
@@ -4208,25 +4258,24 @@ function highlightAnneMicWords(
       span.textContent =
         word;
 
-      if (matched) {
+      if (
+        matchedIndex >= 0
+      ) {
+
+        used[matchedIndex] =
+          true;
 
         span.style.background =
-  '#ffeb3b';
+          '#fde047';
 
-span.style.color =
-  '#000';
+        span.style.borderRadius =
+          '3px';
 
-span.style.borderRadius =
-  '3px';
-
-span.style.padding =
-  '1px 3px';
-
-span.style.boxShadow =
-  'inset 0 -2px 0 rgba(0,0,0,0.08)';
+        span.style.padding =
+          '0 2px';
       }
 
-      sentence.element.appendChild(
+      sentenceEl.appendChild(
         span
       );
 
@@ -4235,7 +4284,7 @@ span.style.boxShadow =
         originalWords.length - 1
       ) {
 
-        sentence.element.appendChild(
+        sentenceEl.appendChild(
           document.createTextNode(' ')
         );
       }
