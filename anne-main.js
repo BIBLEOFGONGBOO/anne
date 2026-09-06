@@ -3497,15 +3497,36 @@ function getCurrentMicSentence() {
     langInfo.code +
     '"]';
 
+  var candidates =
+    Array.from(
+      document.querySelectorAll(
+        selector
+      )
+    );
+
   var sentenceEl =
-    document.querySelector(
-      selector
+    candidates.find(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        var style =
+          window.getComputedStyle(el);
+
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.display !== 'none' &&
+          style.visibility !== 'hidden'
+        );
+      }
     );
 
   if (!sentenceEl) {
 
     console.warn(
-      '[MIC] 현재 문장을 찾지 못함:',
+      '[MIC] 현재 보이는 문장을 찾지 못함:',
       langInfo.code
     );
 
@@ -3520,6 +3541,11 @@ function getCurrentMicSentence() {
   if (!text) {
     return null;
   }
+
+  console.log(
+    '[MIC] 현재 대상:',
+    text
+  );
 
   return {
     element: sentenceEl,
