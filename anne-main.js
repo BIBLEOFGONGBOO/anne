@@ -3392,7 +3392,7 @@ document.addEventListener('keydown', function(e) {
 
 console.log('[ANNE] ✅ NAV 버튼 이벤트 바인딩 완료');
 
-const ANNE_BUILD = '20260906-05';
+const ANNE_BUILD = '20260906-06';
 
 // ============================================================
 // BLOCK 1100: anne-mic.js
@@ -3417,6 +3417,7 @@ var _anneMicRestartTimer = null;
 var _anneMicRecognizeTimer = null;
 var _anneMicLastTranscript = '';
 var _anneMicCurrentRecognition = null;
+var _anneMicPassageIndex = 0;
 
 window.__micRecognizeDelay =
   Number(
@@ -3492,16 +3493,92 @@ function getCurrentMicSentence() {
   var langInfo =
     getAnneMicLanguage();
 
+
+  // ----------------------------------------------------------
+  // PASSAGE / FULL DIARY가 화면에 보이면
+  // 한 문장씩 순서대로 연습
+  // ----------------------------------------------------------
+
+  var diaryLines =
+    Array.from(
+      document.querySelectorAll(
+        '.anne-full-diary ' +
+        '.language-line[data-language="' +
+        langInfo.code +
+        '"]'
+      )
+    ).filter(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        return (
+          rect.width > 0 &&
+          rect.height > 0
+        );
+      }
+    );
+
+
+  if (diaryLines.length) {
+
+    if (
+      _anneMicPassageIndex < 0 ||
+      _anneMicPassageIndex >=
+        diaryLines.length
+    ) {
+
+      _anneMicPassageIndex = 0;
+    }
+
+
+    var diaryEl =
+      diaryLines[
+        _anneMicPassageIndex
+      ];
+
+
+    var diaryText =
+      String(
+        diaryEl.textContent || ''
+      ).trim();
+
+
+    if (diaryText) {
+
+      return {
+        element: diaryEl,
+        text: diaryText,
+        code: langInfo.code,
+        recognition:
+          langInfo.recognition,
+        passageMode: true,
+        passageIndex:
+          _anneMicPassageIndex,
+        passageCount:
+          diaryLines.length
+      };
+    }
+  }
+
+
+  // ----------------------------------------------------------
+  // 기존 단문 방식
+  // ----------------------------------------------------------
+
   var selector =
     '.anne-passage ' +
     '.language-line[data-language="' +
     langInfo.code +
     '"]';
 
+
   var sentenceEl =
     document.querySelector(
       selector
     );
+
 
   if (!sentenceEl) {
 
@@ -3513,21 +3590,25 @@ function getCurrentMicSentence() {
     return null;
   }
 
+
   var text =
     String(
       sentenceEl.textContent || ''
     ).trim();
 
+
   if (!text) {
     return null;
   }
+
 
   return {
     element: sentenceEl,
     text: text,
     code: langInfo.code,
     recognition:
-      langInfo.recognition
+      langInfo.recognition,
+    passageMode: false
   };
 }
 
@@ -4718,82 +4799,120 @@ function startAnneRecognition() {
 
         // AUTO일 때만 다음 문장
         if (
-          window.__micAutoAdvance
+  window.__micAutoAdvance
+) {
+
+  // --------------------------------------------------------
+  // PASSAGE에서는 다음 문장으로 이동
+  // --------------------------------------------------------
+
+  if (
+    sentence.passageMode &&
+    sentence.passageIndex <
+      sentence.passageCount - 1
+  ) {
+
+    _anneMicMoving = true;
+
+    _anneMicPassageIndex++;
+
+    setTimeout(
+      function() {
+
+        _anneMicMoving = false;
+
+        if (
+          ANNE_STATE.micMode
+        ) {
+
+          startAnneRecognition();
+        }
+
+      },
+      650
+    );
+
+    return;
+  }
+
+
+  // --------------------------------------------------------
+  // 단문은 기존처럼 다음 문제로 이동
+  // --------------------------------------------------------
+
+  _anneMicMoving =
+    true;
+
+
+  var currentDate =
+    ANNE_STATE._currentDate;
+
+
+  var dayQuestions =
+    ANNE_STATE.questions.filter(
+      function(q) {
+
+        return (
+          q.date ===
+          currentDate
+        );
+
+      }
+    );
+
+
+  var dayIndex =
+    ANNE_STATE.index -
+    ANNE_STATE._currentDayStart;
+
+
+  if (
+    dayIndex <
+    dayQuestions.length - 1
+  ) {
+
+    setTimeout(
+      function() {
+
+        if (
+          !ANNE_STATE.micMode
         ) {
 
           _anneMicMoving =
-            true;
-
-
-          var currentDate =
-            ANNE_STATE._currentDate;
-
-
-          var dayQuestions =
-            ANNE_STATE.questions.filter(
-              function(q) {
-
-                return (
-                  q.date ===
-                  currentDate
-                );
-
-              }
-            );
-
-
-          var dayIndex =
-            ANNE_STATE.index -
-            ANNE_STATE._currentDayStart;
-
-
-          if (
-            dayIndex <
-            dayQuestions.length - 1
-          ) {
-
-            setTimeout(
-              function() {
-
-                if (
-                  !ANNE_STATE.micMode
-                ) {
-
-                  _anneMicMoving =
-                    false;
-
-                  return;
-                }
-
-                go(1);
-
-                setTimeout(
-                  function() {
-
-                    _anneMicMoving =
-                      false;
-
-                    if (
-                      ANNE_STATE.micMode
-                    ) {
-
-                      startAnneRecognition();
-                    }
-
-                  },
-                  450
-                );
-
-              },
-              650
-            );
-
-            return;
-          }
-
-          _anneMicMoving =
             false;
+
+          return;
         }
+
+        go(1);
+
+        setTimeout(
+          function() {
+
+            _anneMicMoving =
+              false;
+
+            if (
+              ANNE_STATE.micMode
+            ) {
+
+              startAnneRecognition();
+            }
+
+          },
+          450
+        );
+
+      },
+      650
+    );
+
+    return;
+  }
+
+  _anneMicMoving =
+    false;
+}
 
       } else {
 
@@ -4872,6 +4991,7 @@ function turnAnneMicOn() {
 
   ANNE_STATE.micMode =
     true;
+  _anneMicPassageIndex = 0;
 
 
   btn.classList.add(
