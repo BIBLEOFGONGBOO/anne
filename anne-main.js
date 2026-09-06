@@ -1062,6 +1062,31 @@ function saveLastSettings() {
 
 // SUBBLOCK 0402
 function setupHome() {
+    var oldBuild =
+    document.getElementById('anneBuildNumber');
+
+  if (oldBuild) {
+    oldBuild.remove();
+  }
+
+  var build =
+    document.createElement('div');
+
+  build.id = 'anneBuildNumber';
+  build.textContent = 'BUILD ' + ANNE_BUILD;
+
+  build.style.cssText =
+    'position:fixed;' +
+    'right:6px;' +
+    'bottom:4px;' +
+    'z-index:99999;' +
+    'font-size:10px;' +
+    'color:#6b7280;' +
+    'background:rgba(255,255,255,.8);' +
+    'padding:2px 5px;' +
+    'border-radius:4px;';
+
+  document.body.appendChild(build);
   if (_homeInitialized) {
     console.log('[ANNE] setupHome 이미 실행됨, 중복 실행 방지');
     return;
@@ -3365,6 +3390,7 @@ document.addEventListener('keydown', function(e) {
 
 console.log('[ANNE] ✅ NAV 버튼 이벤트 바인딩 완료');
 
+const ANNE_BUILD = '20260906-01';
 
 // ============================================================
 // BLOCK 1100: anne-mic.js
