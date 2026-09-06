@@ -1076,15 +1076,17 @@ function setupHome() {
   build.textContent = 'BUILD ' + ANNE_BUILD;
 
   build.style.cssText =
-    'position:fixed;' +
-    'right:6px;' +
-    'bottom:4px;' +
-    'z-index:99999;' +
-    'font-size:10px;' +
-    'color:#6b7280;' +
-    'background:rgba(255,255,255,.8);' +
-    'padding:2px 5px;' +
-    'border-radius:4px;';
+  'position:fixed;' +
+  'left:6px;' +
+  'top:6px;' +
+  'z-index:999999;' +
+  'font-size:12px;' +
+  'font-weight:700;' +
+  'color:#111;' +
+  'background:#fff59d;' +
+  'padding:3px 6px;' +
+  'border:1px solid #d4c85a;' +
+  'border-radius:4px;';
 
   document.body.appendChild(build);
   if (_homeInitialized) {
