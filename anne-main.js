@@ -3386,6 +3386,21 @@ var Speech =
 var _anneMicInstalled = false;
 var _anneMicMoving = false;
 var _anneMicRestartTimer = null;
+var _anneMicRecognizeTimer = null;
+var _anneMicLastTranscript = '';
+var _anneMicCurrentRecognition = null;
+
+window.__micRecognizeDelay =
+  Number(
+    localStorage.getItem(
+      'gongboo.anne.micRecognizeDelay'
+    )
+  ) || 2.0;
+
+window.__micAutoAdvance =
+  localStorage.getItem(
+    'gongboo.anne.micAutoAdvance'
+  ) !== 'false';
 
 window.__micThreshold =
   Number(
@@ -3750,27 +3765,23 @@ function ensureAnneMicPanel() {
       'anneMicPanel'
     );
 
-
   if (panel) {
     return panel;
   }
-
 
   panel =
     document.createElement(
       'div'
     );
 
-
   panel.id =
     'anneMicPanel';
-
 
   panel.style.cssText = `
     display:none;
     position:absolute;
     z-index:9999;
-    min-width:190px;
+    min-width:210px;
     padding:10px 12px;
     background:#ffffff;
     border:1px solid #d1d5db;
@@ -3778,7 +3789,6 @@ function ensureAnneMicPanel() {
     box-shadow:0 4px 15px rgba(0,0,0,0.18);
     font-size:13px;
   `;
-
 
   panel.innerHTML = `
 
@@ -3790,15 +3800,11 @@ function ensureAnneMicPanel() {
       margin-bottom:7px;
       font-weight:700;
     ">
-
       <span>🎤 PASS</span>
-
       <span id="anneMicThresholdLabel">
         ${window.__micThreshold}%
       </span>
-
     </div>
-
 
     <input
       id="anneMicThreshold"
@@ -3807,12 +3813,81 @@ function ensureAnneMicPanel() {
       max="100"
       step="5"
       value="${window.__micThreshold}"
+      style="width:100%;cursor:pointer;"
+    >
+
+    <div style="
+      margin-top:9px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    ">
+      <span style="font-weight:700;">
+        Recognize Delay
+      </span>
+
+      <select
+        id="anneMicRecognizeDelay"
+        style="
+          padding:4px 5px;
+          border:1px solid #d1d5db;
+          border-radius:6px;
+        "
+      >
+        <option value="1">1.0 sec</option>
+        <option value="1.5">1.5 sec</option>
+        <option value="2">2.0 sec</option>
+        <option value="2.5">2.5 sec</option>
+        <option value="3">3.0 sec</option>
+        <option value="4">4.0 sec</option>
+        <option value="5">5.0 sec</option>
+      </select>
+    </div>
+
+    <div style="
+      margin-top:9px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+    ">
+      <span style="font-weight:700;">
+        Next
+      </span>
+
+      <button
+        id="anneMicAdvanceMode"
+        type="button"
+        style="
+          min-width:78px;
+          padding:5px 8px;
+          border:1px solid #9ca3af;
+          border-radius:7px;
+          background:#f3f4f6;
+          font-weight:700;
+          cursor:pointer;
+        "
+      ></button>
+    </div>
+
+    <button
+      id="anneMicRecognize"
+      type="button"
       style="
-        width:170px;
+        width:100%;
+        margin-top:9px;
+        padding:7px 10px;
+        border:1px solid #2563eb;
+        border-radius:7px;
+        background:#2563eb;
+        color:#ffffff;
+        font-weight:700;
         cursor:pointer;
       "
     >
-
+      Recognize
+    </button>
 
     <div
       id="anneMicScore"
@@ -3825,37 +3900,16 @@ function ensureAnneMicPanel() {
     >
       Ready
     </div>
-    <button
-  id="anneMicRecognize"
-  type="button"
-  style="
-    width:100%;
-    margin-top:8px;
-    padding:7px 10px;
-    border:1px solid #2563eb;
-    border-radius:7px;
-    background:#2563eb;
-    color:#fff;
-    font-weight:700;
-    cursor:pointer;
-  "
->
-  Recognize
-</button>
-
   `;
-
 
   document.body.appendChild(
     panel
   );
 
-
   var range =
     document.getElementById(
       'anneMicThreshold'
     );
-
 
   if (range) {
 
@@ -3867,88 +3921,122 @@ function ensureAnneMicPanel() {
             this.value
           );
 
-
         window.__micThreshold =
           value;
-
 
         localStorage.setItem(
           'gongboo.anne.micThreshold',
           String(value)
         );
 
-
         var label =
           document.getElementById(
             'anneMicThresholdLabel'
           );
 
-
         if (label) {
-
           label.textContent =
             value + '%';
-
         }
-
 
         if (
           typeof saveLastSettings ===
           'function'
         ) {
-
           saveLastSettings();
-
         }
-
       };
   }
 
-var recognizeBtn =
-  document.getElementById(
-    'anneMicRecognize'
-  );
 
-if (recognizeBtn) {
+  var delaySelect =
+    document.getElementById(
+      'anneMicRecognizeDelay'
+    );
 
-  recognizeBtn.onclick =
-    function() {
+  if (delaySelect) {
 
-      if (
-        !ANNE_STATE.micMode ||
-        !ANNE_STATE.recognition
-      ) {
-        return;
-      }
+    delaySelect.value =
+      String(
+        window.__micRecognizeDelay
+      );
 
-      var scoreEl =
-        document.getElementById(
-          'anneMicScore'
+    delaySelect.onchange =
+      function() {
+
+        window.__micRecognizeDelay =
+          Number(this.value) || 2;
+
+        localStorage.setItem(
+          'gongboo.anne.micRecognizeDelay',
+          String(
+            window.__micRecognizeDelay
+          )
+        );
+      };
+  }
+
+
+  var modeBtn =
+    document.getElementById(
+      'anneMicAdvanceMode'
+    );
+
+  function refreshModeButton() {
+
+    if (!modeBtn) {
+      return;
+    }
+
+    modeBtn.textContent =
+      window.__micAutoAdvance
+        ? 'AUTO'
+        : 'MANUAL';
+
+    modeBtn.style.background =
+      window.__micAutoAdvance
+        ? '#dbeafe'
+        : '#f3f4f6';
+  }
+
+  if (modeBtn) {
+
+    modeBtn.onclick =
+      function() {
+
+        window.__micAutoAdvance =
+          !window.__micAutoAdvance;
+
+        localStorage.setItem(
+          'gongboo.anne.micAutoAdvance',
+          String(
+            window.__micAutoAdvance
+          )
         );
 
-      if (scoreEl) {
+        refreshModeButton();
+      };
 
-        scoreEl.textContent =
-          'Recognizing...';
+    refreshModeButton();
+  }
 
-        scoreEl.style.color =
-          '#2563eb';
-      }
 
-      try {
+  var recognizeBtn =
+    document.getElementById(
+      'anneMicRecognize'
+    );
 
-        // 지금까지 들은 발화까지만 최종 인식하도록 요청
-        ANNE_STATE.recognition.stop();
+  if (recognizeBtn) {
 
-      } catch (e) {
+    recognizeBtn.onclick =
+      function() {
 
-        console.warn(
-          '[MIC] Recognize stop failed:',
-          e
+        finalizeAnneMicRecognition(
+          true
         );
-      }
-    };
-}
+      };
+  }
+
   return panel;
 }
 
@@ -4004,6 +4092,184 @@ function positionAnneMicPanel() {
 // ============================================================
 // MIC 결과 표시
 // ============================================================
+
+// ============================================================
+// MIC 맞은 단어 Highlight
+// ============================================================
+
+function highlightAnneMicWords(
+  sentence,
+  spokenText
+) {
+
+  if (
+    !sentence ||
+    !sentence.element
+  ) {
+    return;
+  }
+
+  var original =
+    String(sentence.text || '');
+
+  var spoken =
+    String(spokenText || '');
+
+  var originalWords =
+    original.match(
+      /\S+/g
+    ) || [];
+
+  var spokenWords =
+    spoken.match(
+      /\S+/g
+    ) || [];
+
+  var normalizedSpoken =
+    spokenWords.map(
+      function(word) {
+        return normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+      }
+    );
+
+  var used =
+    new Array(
+      normalizedSpoken.length
+    ).fill(false);
+
+  sentence.element.innerHTML = '';
+
+  originalWords.forEach(
+    function(word, index) {
+
+      var normalizedWord =
+        normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+
+      var matchedIndex = -1;
+
+      for (
+        var i = 0;
+        i < normalizedSpoken.length;
+        i++
+      ) {
+
+        if (
+          !used[i] &&
+          normalizedWord &&
+          normalizedWord ===
+          normalizedSpoken[i]
+        ) {
+
+          matchedIndex = i;
+          break;
+        }
+      }
+
+      var span =
+        document.createElement(
+          'span'
+        );
+
+      span.textContent =
+        word;
+
+      if (
+        matchedIndex >= 0
+      ) {
+
+        used[matchedIndex] =
+          true;
+
+        span.style.background =
+          '#fde047';
+
+        span.style.borderRadius =
+          '3px';
+
+        span.style.padding =
+          '0 2px';
+      }
+
+      sentence.element.appendChild(
+        span
+      );
+
+      if (
+        index <
+        originalWords.length - 1
+      ) {
+
+        sentence.element.appendChild(
+          document.createTextNode(
+            ' '
+          )
+        );
+      }
+    }
+  );
+}
+
+
+// ============================================================
+// 현재까지 들은 발화 판정
+// manualButton = true 이면 Recognize 버튼으로 강제 판정
+// ============================================================
+
+function finalizeAnneMicRecognition(
+  manualButton
+) {
+
+  if (_anneMicRecognizeTimer) {
+
+    clearTimeout(
+      _anneMicRecognizeTimer
+    );
+
+    _anneMicRecognizeTimer =
+      null;
+  }
+
+  var recognition =
+    ANNE_STATE.recognition;
+
+  if (!recognition) {
+    return;
+  }
+
+  var scoreEl =
+    document.getElementById(
+      'anneMicScore'
+    );
+
+  if (scoreEl) {
+
+    scoreEl.textContent =
+      manualButton
+        ? 'Recognizing...'
+        : 'Checking...';
+
+    scoreEl.style.color =
+      '#2563eb';
+  }
+
+  try {
+
+    recognition.stop();
+
+  } catch (e) {
+
+    console.warn(
+      '[MIC] finalize stop failed:',
+      e
+    );
+  }
+}
 
 function showAnneMicScore(
   score,
@@ -4095,20 +4361,16 @@ function startAnneRecognition() {
     return;
   }
 
-
   if (
     !ANNE_STATE.micMode
   ) {
     return;
   }
 
-
   stopAnneRecognition();
-
 
   var sentence =
     getCurrentMicSentence();
-
 
   if (!sentence) {
 
@@ -4119,30 +4381,29 @@ function startAnneRecognition() {
     return;
   }
 
-
   var recognition =
     new SpeechRecognition();
-
 
   ANNE_STATE.recognition =
     recognition;
 
+  _anneMicCurrentRecognition =
+    recognition;
+
+  _anneMicLastTranscript =
+    '';
 
   recognition.lang =
     sentence.recognition;
 
-
   recognition.continuous =
-    false;
-
+    true;
 
   recognition.interimResults =
-    false;
-
+    true;
 
   recognition.maxAlternatives =
     3;
-
 
   console.log(
     '[MIC] 언어:',
@@ -4160,203 +4421,87 @@ function startAnneRecognition() {
         return;
       }
 
-
-      var bestScore = 0;
-
-      var bestText = '';
-
-
-      var results =
-        event.results[
-          event.results.length - 1
-        ];
-
+      var transcript = '';
 
       for (
         var i = 0;
-        i < results.length;
+        i < event.results.length;
         i++
       ) {
 
-        var spokenText =
-          results[i].transcript;
-
-
-        var score =
-          calculateAnneMicScore(
-            sentence.text,
-            spokenText,
-            sentence.code
-          );
-
-
         if (
-          score >
-          bestScore
+          event.results[i] &&
+          event.results[i][0]
         ) {
 
-          bestScore =
-            score;
-
-          bestText =
-            spokenText;
-
+          transcript +=
+            event.results[i][0]
+              .transcript +
+            ' ';
         }
       }
 
+      transcript =
+        transcript.trim();
 
-      var threshold =
-        Number(
-          window.__micThreshold
-        ) || 70;
+      if (!transcript) {
+        return;
+      }
 
-
-      var passed =
-        bestScore >=
-        threshold;
-
-
-      console.log(
-        '[MIC] 원문:',
-        sentence.text
-      );
+      _anneMicLastTranscript =
+        transcript;
 
 
-      console.log(
-        '[MIC] 인식:',
-        bestText
-      );
+      // 말이 새로 들어올 때마다
+      // Recognize Delay 다시 시작
+      if (_anneMicRecognizeTimer) {
 
+        clearTimeout(
+          _anneMicRecognizeTimer
+        );
+      }
 
-      console.log(
-        '[MIC] 점수:',
-        bestScore +
-        '% / 기준 ' +
-        threshold +
-        '%'
-      );
+      var delay =
+        Math.max(
+          0.5,
+          Number(
+            window.__micRecognizeDelay
+          ) || 2
+        );
 
+      _anneMicRecognizeTimer =
+        setTimeout(
+          function() {
 
-      showAnneMicScore(
-        bestScore,
-        passed
-      );
+            if (
+              ANNE_STATE.micMode &&
+              ANNE_STATE.recognition ===
+                recognition
+            ) {
 
-
-      if (passed) {
-
-        _anneMicMoving =
-          true;
-
-
-        if (
-          typeof playPassSound ===
-          'function'
-        ) {
-
-          playPassSound();
-
-        }
-
-
-        try {
-
-          recognition.onend =
-            null;
-
-          recognition.stop();
-
-        } catch (e) {}
-
-
-        // 현재 SET 안의 다음 문장인지 확인
-        var currentDate =
-          ANNE_STATE._currentDate;
-
-
-        var dayQuestions =
-          ANNE_STATE.questions.filter(
-            function(q) {
-
-              return (
-                q.date ===
-                currentDate
+              finalizeAnneMicRecognition(
+                false
               );
-
             }
-          );
+
+          },
+          delay * 1000
+        );
 
 
-        var dayIndex =
-          ANNE_STATE.index -
-          ANNE_STATE._currentDayStart;
+      var scoreEl =
+        document.getElementById(
+          'anneMicScore'
+        );
 
+      if (scoreEl) {
 
-        if (
-          dayIndex <
-          dayQuestions.length - 1
-        ) {
+        scoreEl.textContent =
+          'Listening...';
 
-          setTimeout(
-            function() {
-
-              if (
-                !ANNE_STATE.micMode
-              ) {
-
-                _anneMicMoving =
-                  false;
-
-                return;
-              }
-
-
-              go(1);
-
-
-              setTimeout(
-                function() {
-
-                  _anneMicMoving =
-                    false;
-
-                  if (
-                    ANNE_STATE.micMode
-                  ) {
-
-                    startAnneRecognition();
-
-                  }
-
-                },
-                450
-              );
-
-            },
-            650
-          );
-
-        } else {
-
-          // 마지막 문장
-          _anneMicMoving =
-            false;
-
-        }
-
-      } else {
-
-        if (
-          typeof playFailSound ===
-          'function'
-        ) {
-
-          playFailSound();
-
-        }
-
+        scoreEl.style.color =
+          '#2563eb';
       }
-
     };
 
 
@@ -4368,7 +4513,6 @@ function startAnneRecognition() {
         event.error
       );
 
-
       if (
         event.error ===
         'not-allowed'
@@ -4378,16 +4522,24 @@ function startAnneRecognition() {
           '브라우저에서 마이크 사용 권한을 허용해 주세요.'
         );
 
-
         turnAnneMicOff();
-
       }
-
     };
 
 
   recognition.onend =
     function() {
+
+      if (_anneMicRecognizeTimer) {
+
+        clearTimeout(
+          _anneMicRecognizeTimer
+        );
+
+        _anneMicRecognizeTimer =
+          null;
+      }
+
 
       if (
         !ANNE_STATE.micMode ||
@@ -4395,10 +4547,191 @@ function startAnneRecognition() {
       ) {
 
         return;
-
       }
 
 
+      var spokenText =
+        String(
+          _anneMicLastTranscript || ''
+        ).trim();
+
+
+      if (!spokenText) {
+
+        _anneMicRestartTimer =
+          setTimeout(
+            function() {
+
+              if (
+                ANNE_STATE.micMode &&
+                !_anneMicMoving
+              ) {
+
+                startAnneRecognition();
+              }
+
+            },
+            350
+          );
+
+        return;
+      }
+
+
+      var score =
+        calculateAnneMicScore(
+          sentence.text,
+          spokenText,
+          sentence.code
+        );
+
+
+      var threshold =
+        Number(
+          window.__micThreshold
+        ) || 70;
+
+
+      var passed =
+        score >=
+        threshold;
+
+
+      console.log(
+        '[MIC] 원문:',
+        sentence.text
+      );
+
+      console.log(
+        '[MIC] 인식:',
+        spokenText
+      );
+
+      console.log(
+        '[MIC] 점수:',
+        score +
+        '% / 기준 ' +
+        threshold +
+        '%'
+      );
+
+
+      showAnneMicScore(
+        score,
+        passed
+      );
+
+
+      highlightAnneMicWords(
+        sentence,
+        spokenText
+      );
+
+
+      if (passed) {
+
+        if (
+          typeof playPassSound ===
+          'function'
+        ) {
+
+          playPassSound();
+        }
+
+
+        // AUTO일 때만 다음 문장
+        if (
+          window.__micAutoAdvance
+        ) {
+
+          _anneMicMoving =
+            true;
+
+
+          var currentDate =
+            ANNE_STATE._currentDate;
+
+
+          var dayQuestions =
+            ANNE_STATE.questions.filter(
+              function(q) {
+
+                return (
+                  q.date ===
+                  currentDate
+                );
+
+              }
+            );
+
+
+          var dayIndex =
+            ANNE_STATE.index -
+            ANNE_STATE._currentDayStart;
+
+
+          if (
+            dayIndex <
+            dayQuestions.length - 1
+          ) {
+
+            setTimeout(
+              function() {
+
+                if (
+                  !ANNE_STATE.micMode
+                ) {
+
+                  _anneMicMoving =
+                    false;
+
+                  return;
+                }
+
+                go(1);
+
+                setTimeout(
+                  function() {
+
+                    _anneMicMoving =
+                      false;
+
+                    if (
+                      ANNE_STATE.micMode
+                    ) {
+
+                      startAnneRecognition();
+                    }
+
+                  },
+                  450
+                );
+
+              },
+              650
+            );
+
+            return;
+          }
+
+          _anneMicMoving =
+            false;
+        }
+
+      } else {
+
+        if (
+          typeof playFailSound ===
+          'function'
+        ) {
+
+          playFailSound();
+        }
+      }
+
+
+      // MANUAL 또는 FAIL:
+      // 같은 문장을 다시 듣기 시작
       _anneMicRestartTimer =
         setTimeout(
           function() {
@@ -4409,13 +4742,11 @@ function startAnneRecognition() {
             ) {
 
               startAnneRecognition();
-
             }
 
           },
-          350
+          500
         );
-
     };
 
 
@@ -4423,12 +4754,10 @@ function startAnneRecognition() {
 
     recognition.start();
 
-
     var scoreEl =
       document.getElementById(
         'anneMicScore'
       );
-
 
     if (scoreEl) {
 
@@ -4437,7 +4766,6 @@ function startAnneRecognition() {
 
       scoreEl.style.color =
         '#2563eb';
-
     }
 
   } catch (e) {
@@ -4446,7 +4774,6 @@ function startAnneRecognition() {
       '[MIC] 시작 실패:',
       e
     );
-
   }
 }
 
