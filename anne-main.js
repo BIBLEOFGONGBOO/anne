@@ -1062,13 +1062,7 @@ function saveLastSettings() {
 
 // SUBBLOCK 0402
 function setupHome() {
-    var oldBuild =
-    document.getElementById('anneBuildNumber');
-
-  if (oldBuild) {
-    oldBuild.remove();
-  }
-
+    
     if (_homeInitialized) {
     console.log('[ANNE] setupHome 이미 실행됨, 중복 실행 방지');
     return;
