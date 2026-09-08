@@ -4009,8 +4009,7 @@ function calculateAnneMicScore(
 // MIC compact panel
 // START = 듣기 시작
 // STOP  = 현재까지 즉시 인식/채점, MIC 계속 ON
-// SCORE = STOP 버튼 안에 표시
-// MIC OFF = 상단 MIC 버튼 재클릭
+// SCORE = STOP 버튼 오른쪽
 // ============================================================
 
 function ensureAnneMicPanel() {
@@ -4024,10 +4023,6 @@ function ensureAnneMicPanel() {
     return panel;
   }
 
-
-  // ==========================================================
-  // COMPACT STYLE
-  // ==========================================================
 
   if (
     !document.getElementById(
@@ -4048,44 +4043,28 @@ function ensureAnneMicPanel() {
       #anneMicPanel {
         width:190px;
         max-width:calc(100vw - 12px);
-
-        /*
-          기존 위치에서
-          약간 LEFT + UP
-        */
-        transform:
-          translate(-16px, -9px);
       }
-
 
       #anneMicPanel button {
         transition:
           transform 0.08s ease,
           box-shadow 0.08s ease,
-          background 0.08s ease;
+          filter 0.08s ease;
       }
-
 
       #anneMicPanel button:active {
         transform:scale(0.96);
-
         box-shadow:
           inset 0 2px 4px
-          rgba(0,0,0,0.25);
+          rgba(0,0,0,0.28);
       }
-
 
       @media (max-width:600px) {
 
         #anneMicPanel {
           width:185px !important;
           min-width:185px !important;
-
-          max-width:
-            calc(100vw - 12px) !important;
-
-          transform:
-            translate(-10px, -7px);
+          max-width:calc(100vw - 12px) !important;
         }
       }
     `;
@@ -4096,10 +4075,6 @@ function ensureAnneMicPanel() {
   }
 
 
-  // ==========================================================
-  // PANEL
-  // ==========================================================
-
   panel =
     document.createElement(
       'div'
@@ -4109,11 +4084,8 @@ function ensureAnneMicPanel() {
     'anneMicPanel';
 
   panel.style.cssText = `
-
     display:none;
-
     position:absolute;
-
     z-index:9999;
 
     width:190px;
@@ -4123,9 +4095,7 @@ function ensureAnneMicPanel() {
 
     background:#ffffff;
 
-    border:
-      1px solid #d1d5db;
-
+    border:1px solid #d1d5db;
     border-radius:8px;
 
     box-shadow:
@@ -4137,10 +4107,6 @@ function ensureAnneMicPanel() {
 
 
   panel.innerHTML = `
-
-    <!-- ============================================= -->
-    <!-- PASS -->
-    <!-- ============================================= -->
 
     <div style="
       display:flex;
@@ -4155,17 +4121,13 @@ function ensureAnneMicPanel() {
         PASS
       </span>
 
-
       <input
         id="anneMicThreshold"
         type="range"
-
         min="40"
         max="100"
         step="5"
-
         value="${window.__micThreshold}"
-
         style="
           flex:1;
           min-width:0;
@@ -4173,10 +4135,8 @@ function ensureAnneMicPanel() {
         "
       >
 
-
       <span
         id="anneMicThresholdLabel"
-
         style="
           width:32px;
           text-align:right;
@@ -4189,16 +4149,10 @@ function ensureAnneMicPanel() {
     </div>
 
 
-    <!-- ============================================= -->
-    <!-- DELAY / AUTO -->
-    <!-- ============================================= -->
-
     <div style="
       margin-top:6px;
-
       display:flex;
       align-items:center;
-
       gap:6px;
     ">
 
@@ -4208,84 +4162,42 @@ function ensureAnneMicPanel() {
         DELAY
       </span>
 
-
       <select
         id="anneMicRecognizeDelay"
-
         style="
           width:62px;
           height:25px;
-
           padding:1px 3px;
-
-          border:
-            1px solid #d1d5db;
-
+          border:1px solid #d1d5db;
           border-radius:5px;
-
           background:#ffffff;
-
           font-size:12px;
         "
       >
-
-        <option value="1">
-          1.0s
-        </option>
-
-        <option value="1.5">
-          1.5s
-        </option>
-
-        <option value="2">
-          2.0s
-        </option>
-
-        <option value="2.5">
-          2.5s
-        </option>
-
-        <option value="3">
-          3.0s
-        </option>
-
-        <option value="4">
-          4.0s
-        </option>
-
-        <option value="5">
-          5.0s
-        </option>
-
+        <option value="1">1.0s</option>
+        <option value="1.5">1.5s</option>
+        <option value="2">2.0s</option>
+        <option value="2.5">2.5s</option>
+        <option value="3">3.0s</option>
+        <option value="4">4.0s</option>
+        <option value="5">5.0s</option>
       </select>
-
 
       <button
         id="anneMicAdvanceMode"
-
         type="button"
-
         aria-pressed="false"
-
         style="
           margin-left:auto;
-
           height:25px;
           min-width:54px;
-
           padding:1px 7px;
-
-          border:
-            1px solid #9ca3af;
-
+          border:1px solid #9ca3af;
           border-radius:5px;
-
           background:#f3f4f6;
           color:#374151;
-
           font-size:12px;
           font-weight:800;
-
           cursor:pointer;
         "
       >
@@ -4295,34 +4207,21 @@ function ensureAnneMicPanel() {
     </div>
 
 
-    <!-- ============================================= -->
-    <!-- START / STOP -->
-    <!-- SCORE는 STOP 버튼 안에 표시 -->
-    <!-- ============================================= -->
-
     <div style="
       margin-top:6px;
-
       display:flex;
-
       gap:6px;
     ">
 
-
       <button
         id="anneMicStart"
-
         type="button"
-
         aria-pressed="false"
-
         style="
-          flex:1;
+          flex:0 0 40%;
           height:28px;
 
-          border:
-            1px solid #2563eb;
-
+          border:1px solid #2563eb;
           border-radius:5px;
 
           background:#2563eb;
@@ -4340,16 +4239,19 @@ function ensureAnneMicPanel() {
 
       <button
         id="anneMicStop"
-
         type="button"
-
         style="
           flex:1;
           height:28px;
 
-          border:
-            1px solid #dc2626;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:4px;
 
+          padding:0 7px;
+
+          border:1px solid #dc2626;
           border-radius:5px;
 
           background:#dc2626;
@@ -4361,25 +4263,25 @@ function ensureAnneMicPanel() {
           cursor:pointer;
         "
       >
-        ■ STOP
+        <span>■ STOP</span>
+
+        <span
+          id="anneMicStopScore"
+          style="
+            min-width:28px;
+            text-align:right;
+            font-weight:900;
+          "
+        ></span>
       </button>
 
     </div>
 
 
-    <!--
-      기존 recognition 코드가 점수를 쓰는 장소.
-      화면 높이는 늘리지 않기 위해 숨김.
-      MutationObserver가 값을 읽어서 STOP 버튼에 표시.
-    -->
-
     <div
       id="anneMicScore"
-      style="
-        display:none !important;
-      "
+      style="display:none !important;"
     ></div>
-
   `;
 
 
@@ -4388,45 +4290,40 @@ function ensureAnneMicPanel() {
   );
 
 
-  // ==========================================================
-  // ELEMENTS
-  // ==========================================================
-
   var range =
     document.getElementById(
       'anneMicThreshold'
     );
-
 
   var delaySelect =
     document.getElementById(
       'anneMicRecognizeDelay'
     );
 
-
   var modeBtn =
     document.getElementById(
       'anneMicAdvanceMode'
     );
-
 
   var startBtn =
     document.getElementById(
       'anneMicStart'
     );
 
-
   var stopBtn =
     document.getElementById(
       'anneMicStop'
     );
-
 
   var scoreBox =
     document.getElementById(
       'anneMicScore'
     );
 
+  var stopScore =
+    document.getElementById(
+      'anneMicStopScore'
+    );
 
   var mainMicBtn =
     document.getElementById(
@@ -4448,35 +4345,28 @@ function ensureAnneMicPanel() {
             this.value
           );
 
-
         window.__micThreshold =
           value;
-
 
         localStorage.setItem(
           'gongboo.anne.micThreshold',
           String(value)
         );
 
-
         var label =
           document.getElementById(
             'anneMicThresholdLabel'
           );
 
-
         if (label) {
-
           label.textContent =
             value + '%';
         }
-
 
         if (
           typeof saveLastSettings ===
           'function'
         ) {
-
           saveLastSettings();
         }
       };
@@ -4494,7 +4384,6 @@ function ensureAnneMicPanel() {
         window.__micRecognizeDelay
       );
 
-
     delaySelect.onchange =
       function() {
 
@@ -4502,7 +4391,6 @@ function ensureAnneMicPanel() {
           Number(
             this.value
           ) || 2;
-
 
         localStorage.setItem(
           'gongboo.anne.micRecognizeDelay',
@@ -4524,38 +4412,31 @@ function ensureAnneMicPanel() {
       return;
     }
 
-
     var on =
       !!window.__micAutoAdvance;
 
-
     modeBtn.textContent =
       'AUTO';
-
 
     modeBtn.setAttribute(
       'aria-pressed',
       String(on)
     );
 
-
     modeBtn.style.background =
       on
         ? '#2563eb'
         : '#f3f4f6';
-
 
     modeBtn.style.color =
       on
         ? '#ffffff'
         : '#374151';
 
-
     modeBtn.style.borderColor =
       on
         ? '#2563eb'
         : '#9ca3af';
-
 
     modeBtn.style.boxShadow =
       on
@@ -4572,7 +4453,6 @@ function ensureAnneMicPanel() {
         window.__micAutoAdvance =
           !window.__micAutoAdvance;
 
-
         localStorage.setItem(
           'gongboo.anne.micAutoAdvance',
           String(
@@ -4580,17 +4460,15 @@ function ensureAnneMicPanel() {
           )
         );
 
-
         refreshModeButton();
       };
-
 
     refreshModeButton();
   }
 
 
   // ==========================================================
-  // MIC ACTIVE STATE
+  // MIC ACTIVE
   // ==========================================================
 
   function micIsActive() {
@@ -4599,28 +4477,19 @@ function ensureAnneMicPanel() {
       return false;
     }
 
-
     return (
-
       mainMicBtn.classList.contains(
         'active'
       ) ||
-
       mainMicBtn.classList.contains(
         'is-active'
       ) ||
-
       mainMicBtn.getAttribute(
         'aria-pressed'
       ) === 'true'
-
     );
   }
 
-
-  // ==========================================================
-  // START BUTTON VISUAL STATE
-  // ==========================================================
 
   function refreshStartButton() {
 
@@ -4628,39 +4497,28 @@ function ensureAnneMicPanel() {
       return;
     }
 
-
     var active =
       micIsActive();
-
 
     startBtn.setAttribute(
       'aria-pressed',
       String(active)
     );
 
+    startBtn.style.background =
+      active
+        ? '#174ea6'
+        : '#2563eb';
 
-    if (active) {
+    startBtn.style.borderColor =
+      active
+        ? '#174ea6'
+        : '#2563eb';
 
-      startBtn.style.background =
-        '#174ea6';
-
-      startBtn.style.borderColor =
-        '#174ea6';
-
-      startBtn.style.boxShadow =
-        'inset 0 2px 4px rgba(0,0,0,0.28)';
-
-    } else {
-
-      startBtn.style.background =
-        '#2563eb';
-
-      startBtn.style.borderColor =
-        '#2563eb';
-
-      startBtn.style.boxShadow =
-        'none';
-    }
+    startBtn.style.boxShadow =
+      active
+        ? 'inset 0 2px 4px rgba(0,0,0,0.28)'
+        : 'none';
   }
 
 
@@ -4673,44 +4531,16 @@ function ensureAnneMicPanel() {
     startBtn.onclick =
       function() {
 
-        // 클릭했다는 느낌 즉시 표시
-        startBtn.style.transform =
-          'scale(0.96)';
-
-
-        window.setTimeout(
-          function() {
-
-            startBtn.style.transform =
-              '';
-
-          },
-          100
-        );
-
-
-        if (!mainMicBtn) {
-          return;
-        }
-
-
         if (
+          mainMicBtn &&
           !micIsActive()
         ) {
-
           mainMicBtn.click();
         }
 
-
         window.setTimeout(
           refreshStartButton,
-          60
-        );
-
-
-        window.setTimeout(
-          refreshStartButton,
-          250
+          80
         );
       };
   }
@@ -4718,9 +4548,8 @@ function ensureAnneMicPanel() {
 
   // ==========================================================
   // STOP
-  //
-  // MIC OFF 하지 않음
-  // 지금까지 들은 내용 즉시 인식/채점
+  // 즉시 인식/채점
+  // MIC는 계속 ON
   // ==========================================================
 
   if (stopBtn) {
@@ -4728,28 +4557,18 @@ function ensureAnneMicPanel() {
     stopBtn.onclick =
       function() {
 
-        // 클릭감
-        stopBtn.style.background =
-          '#991b1b';
-
-
-        stopBtn.style.boxShadow =
-          'inset 0 2px 4px rgba(0,0,0,0.30)';
-
+        stopBtn.style.filter =
+          'brightness(0.75)';
 
         window.setTimeout(
           function() {
 
-            stopBtn.style.background =
-              '#dc2626';
-
-            stopBtn.style.boxShadow =
-              'none';
+            stopBtn.style.filter =
+              '';
 
           },
           180
         );
-
 
         if (
           typeof finalizeAnneMicRecognition ===
@@ -4765,24 +4584,17 @@ function ensureAnneMicPanel() {
 
 
   // ==========================================================
-  // SCORE
-  //
-  // 별도 줄 추가하지 않음.
-  // 기존 anneMicScore 값을 읽어 STOP 버튼 안에 표시.
-  //
-  // 예:
-  // ■ STOP 85%
+  // SCORE → STOP 오른쪽
   // ==========================================================
 
-  function refreshScoreInStopButton() {
+  function refreshStopScore() {
 
     if (
       !scoreBox ||
-      !stopBtn
+      !stopScore
     ) {
       return;
     }
-
 
     var text =
       String(
@@ -4790,32 +4602,22 @@ function ensureAnneMicPanel() {
         ''
       ).trim();
 
-
     var match =
       text.match(
         /(\d{1,3})\s*%/
       );
 
-
-    if (match) {
-
-      stopBtn.textContent =
-        '■ STOP ' +
-        match[1] +
-        '%';
-
-    } else {
-
-      stopBtn.textContent =
-        '■ STOP';
-    }
+    stopScore.textContent =
+      match
+        ? match[1] + '%'
+        : '';
   }
 
 
   if (scoreBox) {
 
     new MutationObserver(
-      refreshScoreInStopButton
+      refreshStopScore
     ).observe(
       scoreBox,
       {
@@ -4826,10 +4628,6 @@ function ensureAnneMicPanel() {
     );
   }
 
-
-  // ==========================================================
-  // MAIN MIC STATE WATCH
-  // ==========================================================
 
   if (mainMicBtn) {
 
@@ -4858,6 +4656,7 @@ function ensureAnneMicPanel() {
 // SUBBLOCK 1108
 // ============================================================
 // MIC 설정창 위치
+// MIC 버튼 기준으로 조금 LEFT + UP
 // ============================================================
 
 function positionAnneMicPanel() {
@@ -4867,10 +4666,8 @@ function positionAnneMicPanel() {
       'anneMicButton'
     );
 
-
   var panel =
     ensureAnneMicPanel();
-
 
   if (
     !btn ||
@@ -4884,20 +4681,43 @@ function positionAnneMicPanel() {
     btn.getBoundingClientRect();
 
 
-  panel.style.left =
+  var panelWidth =
+    window.innerWidth <= 600
+      ? 185
+      : 190;
+
+
+  var left =
+    rect.right +
+    window.scrollX -
+    panelWidth -
+    8;
+
+
+  left =
     Math.max(
-      8,
-      rect.left +
-      window.scrollX -
-      145
+      6,
+      Math.min(
+        left,
+        window.scrollX +
+        window.innerWidth -
+        panelWidth -
+        6
+      )
+    );
+
+
+  panel.style.left =
+    Math.round(
+      left
     ) + 'px';
 
 
   panel.style.top =
-    (
+    Math.round(
       rect.bottom +
       window.scrollY +
-      7
+      1
     ) + 'px';
 }
 
