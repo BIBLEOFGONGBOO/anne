@@ -3457,20 +3457,15 @@ function getAnneMicLanguage() {
 // SUBBLOCK 1103
 // ============================================================
 // 현재 읽어야 할 화면 문장 찾기
-// PRIMARY 언어의 현재 PASSAGE 사용
+// PASSAGE 문장 CLICK / TOUCH = 수동 SYNC
+// 현재 인식 문장 = 노란 테두리
 // ============================================================
-
 
 function getCurrentMicSentence() {
 
   var langInfo =
     getAnneMicLanguage();
 
-
-  // ----------------------------------------------------------
-  // PASSAGE / FULL DIARY가 화면에 보이면
-  // 한 문장씩 순서대로 연습
-  // ----------------------------------------------------------
 
   var diaryLines =
     Array.from(
@@ -3494,6 +3489,150 @@ function getCurrentMicSentence() {
     );
 
 
+  // ==========================================================
+  // 현재 SYNC 위치 표시
+  // ==========================================================
+
+  function showCurrentSync(index) {
+
+    diaryLines.forEach(
+      function(el, i) {
+
+        if (i === index) {
+
+          el.style.outline =
+            '2px solid #facc15';
+
+          el.style.outlineOffset =
+            '2px';
+
+          el.style.borderRadius =
+            '4px';
+
+          el.style.cursor =
+            'pointer';
+
+        } else {
+
+          el.style.outline =
+            '';
+
+          el.style.outlineOffset =
+            '';
+
+          el.style.cursor =
+            'pointer';
+        }
+      }
+    );
+  }
+
+
+  // ==========================================================
+  // PASSAGE 문장 클릭 / 터치 → 즉시 SYNC
+  // ==========================================================
+
+  diaryLines.forEach(
+    function(el, index) {
+
+      if (
+        el.dataset.micSyncBound ===
+        '1'
+      ) {
+        return;
+      }
+
+      el.dataset.micSyncBound =
+        '1';
+
+
+      el.addEventListener(
+        'click',
+        function(event) {
+
+          if (
+            !ANNE_STATE.micMode
+          ) {
+            return;
+          }
+
+
+          event.preventDefault();
+          event.stopPropagation();
+
+
+          _anneMicPassageIndex =
+            index;
+
+
+          showCurrentSync(
+            index
+          );
+
+
+          // 이전 발화 버퍼 제거
+          _anneMicLastTranscript =
+            '';
+
+
+          if (
+            _anneMicRecognizeTimer
+          ) {
+
+            clearTimeout(
+              _anneMicRecognizeTimer
+            );
+
+            _anneMicRecognizeTimer =
+              null;
+          }
+
+
+          // 기존 recognition의 onend가
+          // 이전 문장을 채점하지 못하게 함
+          _anneMicMoving =
+            true;
+
+
+          if (
+            ANNE_STATE.recognition
+          ) {
+
+            try {
+
+              ANNE_STATE.recognition.stop();
+
+            } catch (_) {}
+          }
+
+
+          window.setTimeout(
+            function() {
+
+              _anneMicMoving =
+                false;
+
+
+              if (
+                ANNE_STATE.micMode
+              ) {
+
+                startAnneRecognition();
+              }
+
+            },
+            180
+          );
+        }
+      );
+    }
+  );
+
+
+  // ==========================================================
+  // PASSAGE MODE
+  // ==========================================================
+
   if (diaryLines.length) {
 
     if (
@@ -3502,8 +3641,14 @@ function getCurrentMicSentence() {
         diaryLines.length
     ) {
 
-      _anneMicPassageIndex = 0;
+      _anneMicPassageIndex =
+        0;
     }
+
+
+    showCurrentSync(
+      _anneMicPassageIndex
+    );
 
 
     var diaryEl =
@@ -3521,24 +3666,38 @@ function getCurrentMicSentence() {
     if (diaryText) {
 
       return {
-        element: diaryEl,
-        text: diaryText,
-        code: langInfo.code,
+
+        element:
+          diaryEl,
+
+        text:
+          diaryText,
+
+        code:
+          langInfo.code,
+
         recognition:
           langInfo.recognition,
-        passageMode: true,
+
+        passageMode:
+          true,
+
         passageIndex:
           _anneMicPassageIndex,
+
         passageCount:
-          diaryLines.length
+          diaryLines.length,
+
+        passageElements:
+          diaryLines
       };
     }
   }
 
 
-  // ----------------------------------------------------------
-  // 기존 단문 방식
-  // ----------------------------------------------------------
+  // ==========================================================
+  // 단문 MODE
+  // ==========================================================
 
   var selector =
     '.anne-passage ' +
@@ -3576,12 +3735,21 @@ function getCurrentMicSentence() {
 
 
   return {
-    element: sentenceEl,
-    text: text,
-    code: langInfo.code,
+
+    element:
+      sentenceEl,
+
+    text:
+      text,
+
+    code:
+      langInfo.code,
+
     recognition:
       langInfo.recognition,
-    passageMode: false
+
+    passageMode:
+      false
   };
 }
 
@@ -5040,13 +5208,12 @@ function stopAnneRecognition() {
 // SUBBLOCK 1111
 // ============================================================
 // Recognition 생성 및 시작
+// PASSAGE AUTO SYNC 포함
 // ============================================================
 
 function startAnneRecognition() {
 
-  if (
-    !SpeechRecognition
-  ) {
+  if (!SpeechRecognition) {
 
     alert(
       'Chrome 또는 Edge 브라우저에서 마이크 기능을 사용해 주세요.'
@@ -5055,16 +5222,18 @@ function startAnneRecognition() {
     return;
   }
 
-  if (
-    !ANNE_STATE.micMode
-  ) {
+
+  if (!ANNE_STATE.micMode) {
     return;
   }
 
+
   stopAnneRecognition();
+
 
   var sentence =
     getCurrentMicSentence();
+
 
   if (!sentence) {
 
@@ -5075,29 +5244,38 @@ function startAnneRecognition() {
     return;
   }
 
+
   var recognition =
     new SpeechRecognition();
+
 
   ANNE_STATE.recognition =
     recognition;
 
+
   _anneMicCurrentRecognition =
     recognition;
+
 
   _anneMicLastTranscript =
     '';
 
+
   recognition.lang =
     sentence.recognition;
+
 
   recognition.continuous =
     true;
 
+
   recognition.interimResults =
     true;
 
+
   recognition.maxAlternatives =
     3;
+
 
   console.log(
     '[MIC] 언어:',
@@ -5105,6 +5283,10 @@ function startAnneRecognition() {
     recognition.lang
   );
 
+
+  // ==========================================================
+  // RESULT
+  // ==========================================================
 
   recognition.onresult =
     function(event) {
@@ -5115,7 +5297,10 @@ function startAnneRecognition() {
         return;
       }
 
-      var transcript = '';
+
+      var transcript =
+        '';
+
 
       for (
         var i = 0;
@@ -5135,25 +5320,29 @@ function startAnneRecognition() {
         }
       }
 
+
       transcript =
         transcript.trim();
+
 
       if (!transcript) {
         return;
       }
 
+
       _anneMicLastTranscript =
         transcript;
 
 
-      // 말이 새로 들어올 때마다
-      // Recognize Delay 다시 시작
-      if (_anneMicRecognizeTimer) {
+      if (
+        _anneMicRecognizeTimer
+      ) {
 
         clearTimeout(
           _anneMicRecognizeTimer
         );
       }
+
 
       var delay =
         Math.max(
@@ -5162,6 +5351,7 @@ function startAnneRecognition() {
             window.__micRecognizeDelay
           ) || 2
         );
+
 
       _anneMicRecognizeTimer =
         setTimeout(
@@ -5188,6 +5378,7 @@ function startAnneRecognition() {
           'anneMicScore'
         );
 
+
       if (scoreEl) {
 
         scoreEl.textContent =
@@ -5199,6 +5390,10 @@ function startAnneRecognition() {
     };
 
 
+  // ==========================================================
+  // ERROR
+  // ==========================================================
+
   recognition.onerror =
     function(event) {
 
@@ -5206,6 +5401,7 @@ function startAnneRecognition() {
         '[MIC] recognition error:',
         event.error
       );
+
 
       if (
         event.error ===
@@ -5221,10 +5417,16 @@ function startAnneRecognition() {
     };
 
 
+  // ==========================================================
+  // END → SCORE / AUTO SYNC
+  // ==========================================================
+
   recognition.onend =
     function() {
 
-      if (_anneMicRecognizeTimer) {
+      if (
+        _anneMicRecognizeTimer
+      ) {
 
         clearTimeout(
           _anneMicRecognizeTimer
@@ -5246,7 +5448,8 @@ function startAnneRecognition() {
 
       var spokenText =
         String(
-          _anneMicLastTranscript || ''
+          _anneMicLastTranscript ||
+          ''
         ).trim();
 
 
@@ -5272,6 +5475,10 @@ function startAnneRecognition() {
       }
 
 
+      // ======================================================
+      // 현재 문장 SCORE
+      // ======================================================
+
       var score =
         calculateAnneMicScore(
           sentence.text,
@@ -5286,6 +5493,130 @@ function startAnneRecognition() {
         ) || 70;
 
 
+      // ======================================================
+      // PASSAGE AUTO SYNC
+      //
+      // 현재 문장이 크게 안 맞으면
+      // 주변 문장 중 더 잘 맞는 문장을 찾음
+      // ======================================================
+
+      if (
+        sentence.passageMode &&
+        sentence.passageElements &&
+        score < threshold
+      ) {
+
+        var elements =
+          sentence.passageElements;
+
+
+        var currentIndex =
+          sentence.passageIndex;
+
+
+        var candidateIndexes = [
+
+          currentIndex - 1,
+          currentIndex + 1,
+          currentIndex + 2
+
+        ];
+
+
+        var bestIndex =
+          currentIndex;
+
+
+        var bestScore =
+          score;
+
+
+        candidateIndexes.forEach(
+          function(index) {
+
+            if (
+              index < 0 ||
+              index >=
+                elements.length
+            ) {
+              return;
+            }
+
+
+            var candidateText =
+              String(
+                elements[index]
+                  .textContent ||
+                ''
+              ).trim();
+
+
+            if (!candidateText) {
+              return;
+            }
+
+
+            var candidateScore =
+              calculateAnneMicScore(
+                candidateText,
+                spokenText,
+                sentence.code
+              );
+
+
+            if (
+              candidateScore >
+              bestScore
+            ) {
+
+              bestScore =
+                candidateScore;
+
+              bestIndex =
+                index;
+            }
+          }
+        );
+
+
+        // ----------------------------------------------------
+        // 잘못된 자동 점프 방지
+        //
+        // 현재보다 최소 12점 높고
+        // 최소 55점 이상일 때만 SYNC
+        // ----------------------------------------------------
+
+        if (
+          bestIndex !==
+            currentIndex &&
+          bestScore >= 55 &&
+          bestScore >=
+            score + 12
+        ) {
+
+          console.log(
+            '[MIC SYNC]',
+            currentIndex,
+            '→',
+            bestIndex,
+            bestScore + '%'
+          );
+
+
+          _anneMicPassageIndex =
+            bestIndex;
+
+
+          sentence =
+            getCurrentMicSentence();
+
+
+          score =
+            bestScore;
+        }
+      }
+
+
       var passed =
         score >=
         threshold;
@@ -5296,10 +5627,12 @@ function startAnneRecognition() {
         sentence.text
       );
 
+
       console.log(
         '[MIC] 인식:',
         spokenText
       );
+
 
       console.log(
         '[MIC] 점수:',
@@ -5322,6 +5655,10 @@ function startAnneRecognition() {
       );
 
 
+      // ======================================================
+      // PASS
+      // ======================================================
+
       if (passed) {
 
         if (
@@ -5333,122 +5670,136 @@ function startAnneRecognition() {
         }
 
 
-        // AUTO일 때만 다음 문장
-        if (
-  window.__micAutoAdvance
-) {
-
-  // --------------------------------------------------------
-  // PASSAGE에서는 다음 문장으로 이동
-  // --------------------------------------------------------
-
-  if (
-    sentence.passageMode &&
-    sentence.passageIndex <
-      sentence.passageCount - 1
-  ) {
-
-    _anneMicMoving = true;
-
-    _anneMicPassageIndex++;
-
-    setTimeout(
-      function() {
-
-        _anneMicMoving = false;
+        // ====================================================
+        // AUTO
+        // ====================================================
 
         if (
-          ANNE_STATE.micMode
+          window.__micAutoAdvance
         ) {
 
-          startAnneRecognition();
-        }
+          // --------------------------------------------------
+          // PASSAGE → 다음 문장
+          // --------------------------------------------------
 
-      },
-      650
-    );
+          if (
+            sentence.passageMode &&
+            sentence.passageIndex <
+              sentence.passageCount - 1
+          ) {
 
-    return;
-  }
-
-
-  // --------------------------------------------------------
-  // 단문은 기존처럼 다음 문제로 이동
-  // --------------------------------------------------------
-
-  _anneMicMoving =
-    true;
+            _anneMicMoving =
+              true;
 
 
-  var currentDate =
-    ANNE_STATE._currentDate;
+            _anneMicPassageIndex =
+              sentence.passageIndex + 1;
 
 
-  var dayQuestions =
-    ANNE_STATE.questions.filter(
-      function(q) {
+            setTimeout(
+              function() {
 
-        return (
-          q.date ===
-          currentDate
-        );
-
-      }
-    );
+                _anneMicMoving =
+                  false;
 
 
-  var dayIndex =
-    ANNE_STATE.index -
-    ANNE_STATE._currentDayStart;
+                if (
+                  ANNE_STATE.micMode
+                ) {
+
+                  startAnneRecognition();
+                }
+
+              },
+              650
+            );
 
 
-  if (
-    dayIndex <
-    dayQuestions.length - 1
-  ) {
+            return;
+          }
 
-    setTimeout(
-      function() {
 
-        if (
-          !ANNE_STATE.micMode
-        ) {
+          // --------------------------------------------------
+          // 단문 → 다음 문제
+          // --------------------------------------------------
+
+          _anneMicMoving =
+            true;
+
+
+          var currentDate =
+            ANNE_STATE._currentDate;
+
+
+          var dayQuestions =
+            ANNE_STATE.questions.filter(
+              function(q) {
+
+                return (
+                  q.date ===
+                  currentDate
+                );
+              }
+            );
+
+
+          var dayIndex =
+            ANNE_STATE.index -
+            ANNE_STATE._currentDayStart;
+
+
+          if (
+            dayIndex <
+            dayQuestions.length - 1
+          ) {
+
+            setTimeout(
+              function() {
+
+                if (
+                  !ANNE_STATE.micMode
+                ) {
+
+                  _anneMicMoving =
+                    false;
+
+                  return;
+                }
+
+
+                go(1);
+
+
+                setTimeout(
+                  function() {
+
+                    _anneMicMoving =
+                      false;
+
+
+                    if (
+                      ANNE_STATE.micMode
+                    ) {
+
+                      startAnneRecognition();
+                    }
+
+                  },
+                  450
+                );
+
+              },
+              650
+            );
+
+
+            return;
+          }
+
 
           _anneMicMoving =
             false;
-
-          return;
         }
-
-        go(1);
-
-        setTimeout(
-          function() {
-
-            _anneMicMoving =
-              false;
-
-            if (
-              ANNE_STATE.micMode
-            ) {
-
-              startAnneRecognition();
-            }
-
-          },
-          450
-        );
-
-      },
-      650
-    );
-
-    return;
-  }
-
-  _anneMicMoving =
-    false;
-}
 
       } else {
 
@@ -5462,8 +5813,11 @@ function startAnneRecognition() {
       }
 
 
-      // MANUAL 또는 FAIL:
-      // 같은 문장을 다시 듣기 시작
+      // ======================================================
+      // MANUAL / FAIL
+      // 현재 SYNC 문장에서 계속 듣기
+      // ======================================================
+
       _anneMicRestartTimer =
         setTimeout(
           function() {
@@ -5482,11 +5836,15 @@ function startAnneRecognition() {
     };
 
 
- try {
+  // ==========================================================
+  // START
+  // ==========================================================
 
-  recognition.start();
+  try {
 
-} catch (e) {
+    recognition.start();
+
+  } catch (e) {
 
     console.warn(
       '[MIC] 시작 실패:',
