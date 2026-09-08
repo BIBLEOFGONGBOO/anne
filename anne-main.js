@@ -3838,7 +3838,8 @@ function calculateAnneMicScore(
 
 // SUBBLOCK 1107
 // ============================================================
-// MIC % 설정창
+// MIC 설정창
+// Simple / Dyslexia-friendly / Mobile compact
 // ============================================================
 
 function ensureAnneMicPanel() {
@@ -3852,6 +3853,62 @@ function ensureAnneMicPanel() {
     return panel;
   }
 
+
+  // ----------------------------------------------------------
+  // Responsive style
+  // ----------------------------------------------------------
+
+  if (
+    !document.getElementById(
+      'anneMicPanelResponsiveStyle'
+    )
+  ) {
+
+    var style =
+      document.createElement(
+        'style'
+      );
+
+    style.id =
+      'anneMicPanelResponsiveStyle';
+
+    style.textContent = `
+      #anneMicPanel {
+        width:220px;
+      }
+
+      @media (max-width:600px) {
+        #anneMicPanel {
+          position:fixed !important;
+          left:10px !important;
+          right:10px !important;
+          bottom:10px !important;
+          top:auto !important;
+
+          width:auto !important;
+          min-width:0 !important;
+
+          padding:9px 10px !important;
+          border-radius:12px !important;
+        }
+
+        #anneMicPanel .anne-mic-row {
+          margin-top:6px !important;
+        }
+
+        #anneMicPanel #anneMicRecognize {
+          height:42px !important;
+          font-size:16px !important;
+        }
+      }
+    `;
+
+    document.head.appendChild(
+      style
+    );
+  }
+
+
   panel =
     document.createElement(
       'div'
@@ -3864,30 +3921,54 @@ function ensureAnneMicPanel() {
     display:none;
     position:absolute;
     z-index:9999;
+
     min-width:210px;
+
     padding:10px 12px;
+
     background:#ffffff;
+
     border:1px solid #d1d5db;
     border-radius:10px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.18);
+
+    box-shadow:
+      0 4px 15px
+      rgba(0,0,0,0.18);
+
     font-size:13px;
   `;
+
 
   panel.innerHTML = `
 
     <div style="
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:7px;
-      font-weight:700;
+      text-align:center;
+      font-size:15px;
+      font-weight:800;
+      margin-bottom:8px;
+      color:#1f2937;
     ">
-      <span>🎤 PASS</span>
+      🎤 SPEAK
+    </div>
+
+
+    <div
+      class="anne-mic-row"
+      style="
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        font-weight:700;
+      "
+    >
+      <span>PASS</span>
+
       <span id="anneMicThresholdLabel">
         ${window.__micThreshold}%
       </span>
     </div>
+
 
     <input
       id="anneMicThreshold"
@@ -3896,26 +3977,35 @@ function ensureAnneMicPanel() {
       max="100"
       step="5"
       value="${window.__micThreshold}"
-      style="width:100%;cursor:pointer;"
+      style="
+        width:100%;
+        cursor:pointer;
+        margin-top:3px;
+      "
     >
 
-    <div style="
-      margin-top:9px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-    ">
+
+    <div
+      class="anne-mic-row"
+      style="
+        margin-top:8px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+      "
+    >
       <span style="font-weight:700;">
-        Recognize Delay
+        DELAY
       </span>
 
       <select
         id="anneMicRecognizeDelay"
         style="
-          padding:4px 5px;
+          padding:4px 6px;
           border:1px solid #d1d5db;
           border-radius:6px;
+          background:#ffffff;
         "
       >
         <option value="1">1.0 sec</option>
@@ -3928,71 +4018,97 @@ function ensureAnneMicPanel() {
       </select>
     </div>
 
-    <div style="
-      margin-top:9px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-    ">
+
+    <div
+      class="anne-mic-row"
+      style="
+        margin-top:8px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+      "
+    >
       <span style="font-weight:700;">
-        Next
+        NEXT
       </span>
 
       <button
         id="anneMicAdvanceMode"
         type="button"
+        aria-pressed="false"
         style="
           min-width:78px;
-          padding:5px 8px;
+          padding:5px 10px;
+
           border:1px solid #9ca3af;
           border-radius:7px;
+
           background:#f3f4f6;
-          font-weight:700;
+
+          font-weight:800;
           cursor:pointer;
         "
-      ></button>
+      >
+        AUTO
+      </button>
     </div>
+
 
     <button
       id="anneMicRecognize"
       type="button"
+      data-running="false"
       style="
         width:100%;
-        margin-top:9px;
+        height:40px;
+
+        margin-top:10px;
         padding:7px 10px;
+
         border:1px solid #2563eb;
-        border-radius:7px;
+        border-radius:8px;
+
         background:#2563eb;
         color:#ffffff;
-        font-weight:700;
+
+        font-size:15px;
+        font-weight:800;
+
         cursor:pointer;
       "
     >
-      Recognize
+      🎤 START
     </button>
+
 
     <div
       id="anneMicScore"
       style="
-        margin-top:7px;
+        display:none;
+        margin-top:6px;
         text-align:center;
         font-weight:700;
-        color:#555;
+        color:#2563eb;
       "
-    >
-      Ready
-    </div>
+    ></div>
   `;
+
 
   document.body.appendChild(
     panel
   );
 
+
+  // ----------------------------------------------------------
+  // PASS
+  // ----------------------------------------------------------
+
   var range =
     document.getElementById(
       'anneMicThreshold'
     );
+
 
   if (range) {
 
@@ -4004,38 +4120,50 @@ function ensureAnneMicPanel() {
             this.value
           );
 
+
         window.__micThreshold =
           value;
+
 
         localStorage.setItem(
           'gongboo.anne.micThreshold',
           String(value)
         );
 
+
         var label =
           document.getElementById(
             'anneMicThresholdLabel'
           );
 
+
         if (label) {
+
           label.textContent =
             value + '%';
         }
+
 
         if (
           typeof saveLastSettings ===
           'function'
         ) {
+
           saveLastSettings();
         }
       };
   }
 
 
+  // ----------------------------------------------------------
+  // DELAY
+  // ----------------------------------------------------------
+
   var delaySelect =
     document.getElementById(
       'anneMicRecognizeDelay'
     );
+
 
   if (delaySelect) {
 
@@ -4044,11 +4172,15 @@ function ensureAnneMicPanel() {
         window.__micRecognizeDelay
       );
 
+
     delaySelect.onchange =
       function() {
 
         window.__micRecognizeDelay =
-          Number(this.value) || 2;
+          Number(
+            this.value
+          ) || 2;
+
 
         localStorage.setItem(
           'gongboo.anne.micRecognizeDelay',
@@ -4060,10 +4192,15 @@ function ensureAnneMicPanel() {
   }
 
 
+  // ----------------------------------------------------------
+  // AUTO toggle
+  // ----------------------------------------------------------
+
   var modeBtn =
     document.getElementById(
       'anneMicAdvanceMode'
     );
+
 
   function refreshModeButton() {
 
@@ -4071,16 +4208,39 @@ function ensureAnneMicPanel() {
       return;
     }
 
+
+    var on =
+      !!window.__micAutoAdvance;
+
+
     modeBtn.textContent =
-      window.__micAutoAdvance
-        ? 'AUTO'
-        : 'MANUAL';
+      'AUTO';
+
+
+    modeBtn.setAttribute(
+      'aria-pressed',
+      String(on)
+    );
+
 
     modeBtn.style.background =
-      window.__micAutoAdvance
-        ? '#dbeafe'
+      on
+        ? '#2563eb'
         : '#f3f4f6';
+
+
+    modeBtn.style.color =
+      on
+        ? '#ffffff'
+        : '#374151';
+
+
+    modeBtn.style.borderColor =
+      on
+        ? '#2563eb'
+        : '#9ca3af';
   }
+
 
   if (modeBtn) {
 
@@ -4090,6 +4250,7 @@ function ensureAnneMicPanel() {
         window.__micAutoAdvance =
           !window.__micAutoAdvance;
 
+
         localStorage.setItem(
           'gongboo.anne.micAutoAdvance',
           String(
@@ -4097,28 +4258,175 @@ function ensureAnneMicPanel() {
           )
         );
 
+
         refreshModeButton();
       };
+
 
     refreshModeButton();
   }
 
 
-  var recognizeBtn =
+  // ----------------------------------------------------------
+  // START / STOP
+  // 기존 MIC 버튼의 실제 동작을 그대로 사용
+  // ----------------------------------------------------------
+
+  var startStopBtn =
     document.getElementById(
       'anneMicRecognize'
     );
 
-  if (recognizeBtn) {
 
-    recognizeBtn.onclick =
+  var mainMicBtn =
+    document.getElementById(
+      'anneMicButton'
+    );
+
+
+  function micLooksActive() {
+
+    if (!mainMicBtn) {
+      return false;
+    }
+
+
+    return (
+      mainMicBtn.classList.contains(
+        'active'
+      ) ||
+      mainMicBtn.classList.contains(
+        'is-active'
+      ) ||
+      mainMicBtn.getAttribute(
+        'aria-pressed'
+      ) === 'true'
+    );
+  }
+
+
+  function refreshStartStop() {
+
+    if (!startStopBtn) {
+      return;
+    }
+
+
+    var running =
+      micLooksActive();
+
+
+    startStopBtn.dataset.running =
+      String(running);
+
+
+    startStopBtn.textContent =
+      running
+        ? '■ STOP'
+        : '🎤 START';
+
+
+    startStopBtn.style.background =
+      running
+        ? '#dc2626'
+        : '#2563eb';
+
+
+    startStopBtn.style.borderColor =
+      running
+        ? '#dc2626'
+        : '#2563eb';
+
+
+    var score =
+      document.getElementById(
+        'anneMicScore'
+      );
+
+
+    if (score) {
+
+      if (running) {
+
+        score.style.display =
+          'block';
+
+        score.textContent =
+          'Listening...';
+
+      } else {
+
+        if (
+          score.textContent ===
+          'Listening...'
+        ) {
+
+          score.textContent =
+            '';
+
+          score.style.display =
+            'none';
+        }
+      }
+    }
+  }
+
+
+  if (startStopBtn) {
+
+    startStopBtn.onclick =
       function() {
 
-        finalizeAnneMicRecognition(
-          true
-        );
+        if (mainMicBtn) {
+
+          mainMicBtn.click();
+
+          window.setTimeout(
+            refreshStartStop,
+            60
+          );
+
+          window.setTimeout(
+            refreshStartStop,
+            250
+          );
+
+          return;
+        }
+
+
+        if (
+          typeof finalizeAnneMicRecognition ===
+          'function'
+        ) {
+
+          finalizeAnneMicRecognition(
+            true
+          );
+        }
       };
   }
+
+
+  if (mainMicBtn) {
+
+    new MutationObserver(
+      refreshStartStop
+    ).observe(
+      mainMicBtn,
+      {
+        attributes:true,
+        attributeFilter:[
+          'class',
+          'aria-pressed'
+        ]
+      }
+    );
+  }
+
+
+  refreshStartStop();
+
 
   return panel;
 }
