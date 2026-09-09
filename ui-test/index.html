@@ -354,121 +354,128 @@
 
 
         <!-- SUBBLOCK 3000 : MORE / MODE -->
-        <div class="gb-card-wrap">
 
-          <button
-            id="moreButton"
-            class="gb-tool-button gb-tool-button-square"
-            type="button"
-            aria-expanded="false"
-          >
-            ⋯
-          </button>
+<div class="gb-card-wrap">
 
-          <div
-            id="moreCard"
-            class="gb-card"
-            hidden
-          >
-            <div class="gb-card-title">
-              MODE
-            </div>
+  <button
+    id="moreButton"
+    class="gb-tool-button gb-tool-button-square"
+    type="button"
+    aria-expanded="false"
+  >
+    ⋯
+  </button>
 
-            <div class="gb-mode-row">
+  <div
+    id="moreCard"
+    class="gb-card"
+    hidden
+  >
 
-              <button
-                class="gb-mode-button is-active"
-                type="button"
-              >
-                LRN
-              </button>
+    <div class="gb-card-title">
+      MODE
+    </div>
 
-              <button
-                class="gb-mode-button"
-                type="button"
-              >
-                STD
-              </button>
+    <div
+      id="modeButtons"
+      class="gb-mode-row"
+    >
 
-              <button
-                class="gb-mode-button"
-                type="button"
-                disabled
-              >
-                QZ
-              </button>
+      <button
+        class="gb-mode-button mode-btn mode-learn"
+        type="button"
+        data-ui-mode="learn"
+      >
+        LRN
+      </button>
 
-            </div>
+      <button
+        class="gb-mode-button mode-btn mode-study"
+        type="button"
+        data-ui-mode="study"
+      >
+        STD
+      </button>
 
-            <div class="gb-card-separator"></div>
+      <button
+        class="gb-mode-button mode-btn mode-exam"
+        type="button"
+        data-ui-mode="exam"
+      >
+        EXM
+      </button>
 
-            <div class="gb-more-grid">
+    </div>
 
-              <button
-                id="chunkToggle"
-                class="gb-more-grid-button"
-                type="button"
-                aria-pressed="false"
-              >
-                CHUNK
-              </button>
+    <div class="gb-card-separator"></div>
 
-              <button
-                id="peopleButton"
-                class="gb-more-grid-button"
-                type="button"
-                disabled
-              >
-                PEOPLE
-              </button>
+    <div class="gb-more-grid">
 
-              <button
-                id="mapButton"
-                class="gb-more-grid-button"
-                type="button"
-                disabled
-              >
-                MAP
-              </button>
+      <button
+        id="bibleQuizToggle"
+        class="gb-more-grid-button"
+        type="button"
+        aria-pressed="true"
+      >
+        QZ
+      </button>
 
-              <button
-                class="gb-more-grid-button"
-                type="button"
-                disabled
-              >
-                OPTION
-              </button>
+      <button
+        id="chunkToggle"
+        class="gb-more-grid-button"
+        type="button"
+        aria-pressed="false"
+      >
+        CHUNK
+      </button>
 
-              <button
-                class="gb-more-grid-button"
-                type="button"
-                disabled
-              >
-                OPTION
-              </button>
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
 
-              <button
-                class="gb-more-grid-button"
-                type="button"
-                disabled
-              >
-                OPTION
-              </button>
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
 
-            </div>
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
 
-            <div class="gb-card-separator"></div>
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
 
-            <button
-              class="gb-login-button"
-              type="button"
-              disabled
-            >
-              LOGIN
-            </button>
+    </div>
 
-          </div>
-        </div>
+    <div class="gb-card-separator"></div>
+
+    <button
+      class="gb-login-button"
+      type="button"
+      disabled
+    >
+      LOGIN
+    </button>
+
+  </div>
+
+</div>
 
       </div>
     </div>
