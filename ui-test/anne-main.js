@@ -5729,45 +5729,130 @@ function turnAnneMicOff() {
 
 // SUBBLOCK 1114
 // ============================================================
-// MIC 버튼 설치
-//
-// licenseSpeech가 버튼을 나중에 생성하므로
-// 버튼이 나타날 때 자동으로 바인딩
+// MIC TEMPLATE BUTTON BRIDGE
+// 새 템플릿 MIC → 기존 ANNE MIC 엔진 연결
 // ============================================================
 
 function installAnneMicButton() {
 
-  var btn =
+  var startBtn =
     document.getElementById(
-      'anneMicButton'
+      'micStartButton'
+    );
+
+  var stopBtn =
+    document.getElementById(
+      'micStopButton'
+    );
+
+  var autoBtn =
+    document.getElementById(
+      'micAutoToggle'
+    );
+
+  var passRange =
+    document.getElementById(
+      'passRange'
+    );
+
+  var passValue =
+    document.getElementById(
+      'passValue'
     );
 
 
-  if (!btn) {
+  if (!startBtn) {
     return false;
   }
 
 
   if (
-    btn.dataset.micBound ===
+    startBtn.dataset.micBound ===
     '1'
   ) {
-
     return true;
   }
 
 
-  btn.dataset.micBound =
+  startBtn.dataset.micBound =
     '1';
 
 
-  btn.setAttribute(
+  // ==========================================================
+  // PASS %
+  // ==========================================================
+
+  if (passRange) {
+
+    window.__micThreshold =
+      Number(
+        passRange.value || 70
+      );
+
+
+    if (passValue) {
+      passValue.textContent =
+        window.__micThreshold + '%';
+    }
+
+
+    passRange.oninput =
+      function() {
+
+        window.__micThreshold =
+          Number(this.value || 70);
+
+
+        if (passValue) {
+
+          passValue.textContent =
+            window.__micThreshold + '%';
+
+        }
+
+
+        saveLastSettings();
+      };
+
+  }
+
+
+  // ==========================================================
+  // AUTO
+  // ==========================================================
+
+  if (autoBtn) {
+
+    autoBtn.onclick =
+      function() {
+
+        window.__micAutoAdvance =
+          !window.__micAutoAdvance;
+
+
+        this.setAttribute(
+          'aria-pressed',
+          String(
+            window.__micAutoAdvance
+          )
+        );
+
+      };
+
+  }
+
+
+  // ==========================================================
+  // START
+  // ==========================================================
+
+  startBtn.setAttribute(
     'aria-pressed',
     'false'
   );
 
 
-  btn.onclick =
+  startBtn.onclick =
     function() {
 
       if (
@@ -5776,13 +5861,75 @@ function installAnneMicButton() {
 
         turnAnneMicOff();
 
-      } else {
+        this.setAttribute(
+          'aria-pressed',
+          'false'
+        );
 
-        turnAnneMicOn();
+        return;
+      }
+
+
+      turnAnneMicOn();
+
+
+      this.setAttribute(
+        'aria-pressed',
+        'true'
+      );
+
+
+      if (stopBtn) {
+
+        stopBtn.setAttribute(
+          'aria-pressed',
+          'false'
+        );
 
       }
 
-    };
+  };
+
+
+  // ==========================================================
+  // STOP
+  // ==========================================================
+
+  if (stopBtn) {
+
+    stopBtn.onclick =
+      function() {
+
+        turnAnneMicOff();
+
+
+        startBtn.setAttribute(
+          'aria-pressed',
+          'false'
+        );
+
+
+        this.setAttribute(
+          'aria-pressed',
+          'true'
+        );
+
+
+        setTimeout(
+          function() {
+
+            stopBtn.setAttribute(
+              'aria-pressed',
+              'false'
+            );
+
+          },
+          250
+        );
+
+      };
+
+  }
 
 
   _anneMicInstalled =
@@ -5790,7 +5937,7 @@ function installAnneMicButton() {
 
 
   console.log(
-    '[MIC] ✅ 마이크 버튼 설치 완료'
+    '[MIC] ✅ TEMPLATE MIC 연결 완료'
   );
 
 
