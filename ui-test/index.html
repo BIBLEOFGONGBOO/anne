@@ -19,62 +19,69 @@
 
       <div class="gb-toolbar">
 
-        <!-- SUBBLOCK 0500 : SYSTEM -->
-        <div class="gb-card-wrap">
+       <!-- SUBBLOCK 0500 : SYSTEM -->
 
-          <button
-            id="systemButton"
-            class="gb-tool-button gb-system-button"
-            type="button"
-            aria-expanded="false"
-          >
-            CON
-            <span class="gb-chevron">▼</span>
-          </button>
+<div class="gb-card-wrap">
 
-          <div
-            id="systemCard"
-            class="gb-card gb-system-card"
-            hidden
-          >
-            <div class="gb-card-title">
-              SYSTEM
-            </div>
+  <button
+    id="systemButton"
+    class="gb-tool-button gb-system-button"
+    type="button"
+    aria-expanded="false"
+  >
+    EAS
+    <span class="gb-chevron">▼</span>
+  </button>
 
-            <button
-              class="gb-system-option is-active"
-              type="button"
-            >
-              <span class="gb-system-code">CON</span>
-              <span class="gb-system-name">CONVERSATION</span>
-            </button>
+  <div
+    id="systemCard"
+    class="gb-card gb-system-card"
+    hidden
+  >
 
-            <button
-              class="gb-system-option"
-              type="button"
-            >
-              <span class="gb-system-code">BIB</span>
-              <span class="gb-system-name">BIBLE</span>
-            </button>
+    <div class="gb-card-title">
+      SYSTEM
+    </div>
 
-            <button
-              class="gb-system-option"
-              type="button"
-            >
-              <span class="gb-system-code">EAS</span>
-              <span class="gb-system-name">EASY LEARNING</span>
-              <span class="gb-submenu-arrow">›</span>
-            </button>
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://bibleofgongboo.github.io/conversation/'"
+    >
+      <span class="gb-system-code">CON</span>
+      <span class="gb-system-name">CONVERSATION</span>
+    </button>
 
-            <button
-              class="gb-system-option"
-              type="button"
-            >
-              <span class="gb-system-code">LIC</span>
-              <span class="gb-system-name">LICENSE</span>
-            </button>
-          </div>
-        </div>
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://bibleofgongboo.github.io/biblenew/'"
+    >
+      <span class="gb-system-code">BIB</span>
+      <span class="gb-system-name">BIBLE</span>
+    </button>
+
+    <button
+      class="gb-system-option is-active"
+      type="button"
+      aria-current="page"
+    >
+      <span class="gb-system-code">EAS</span>
+      <span class="gb-system-name">EASY LEARNING</span>
+    </button>
+
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://biblegongboo.github.io/license/app/'"
+    >
+      <span class="gb-system-code">LIC</span>
+      <span class="gb-system-name">LICENSE</span>
+    </button>
+
+  </div>
+
+</div>
 
 
         <!-- SUBBLOCK 1000 : PSG -->
