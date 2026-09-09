@@ -96,51 +96,67 @@
 
 
         <!-- SUBBLOCK 1500 : LANGUAGE -->
-        <div class="gb-card-wrap">
 
-          <button
-            id="langButton"
-            class="gb-tool-button"
-            type="button"
-            aria-expanded="false"
-          >
-            LANG
-          </button>
+<div class="gb-card-wrap">
 
-          <div
-            id="langCard"
-            class="gb-card"
-            hidden
-          >
-            <div class="gb-card-title">
-              LANGUAGE
-            </div>
+  <button
+    id="langButton"
+    class="gb-tool-button"
+    type="button"
+    aria-expanded="false"
+  >
+    LANG
+  </button>
 
-            <div class="gb-card-row">
-              <span class="gb-card-label">
-                PRIMARY
-              </span>
+  <div
+    id="langCard"
+    class="gb-card"
+    hidden
+  >
 
-              <select class="gb-select">
-                <option>English</option>
-                <option>Korean</option>
-                <option>Japanese</option>
-              </select>
-            </div>
+    <div class="gb-card-title">
+      LANGUAGE
+    </div>
 
-            <div class="gb-card-row">
-              <span class="gb-card-label">
-                SECONDARY
-              </span>
+    <div class="gb-card-row">
 
-              <select class="gb-select">
-                <option>Korean</option>
-                <option>English</option>
-                <option>Japanese</option>
-              </select>
-            </div>
-          </div>
-        </div>
+      <span class="gb-card-label">
+        PRIMARY
+      </span>
+
+      <select
+        id="biblePrimaryTextSelector"
+        class="gb-select"
+        aria-label="Primary language"
+      >
+        <option value="ENG">ENG</option>
+        <option value="KOR">KOR</option>
+        <option value="JPN">JPN</option>
+      </select>
+
+    </div>
+
+    <div class="gb-card-row">
+
+      <span class="gb-card-label">
+        SECONDARY
+      </span>
+
+      <select
+        id="bibleSecondaryTextSelector"
+        class="gb-select"
+        aria-label="Secondary language"
+      >
+        <option value="KOR">KOR</option>
+        <option value="ENG">ENG</option>
+        <option value="JPN">JPN</option>
+      </select>
+
+    </div>
+
+  </div>
+
+</div>
 
 
         <!-- SUBBLOCK 2000 : PLAY -->
