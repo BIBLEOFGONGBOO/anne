@@ -522,45 +522,18 @@
           📖
         </div>
 
-        <div class="card-title card-title-new">
-          NEW LESSON
-        </div>
-
-        <div class="card-sub">
-          Choose a set
-        </div>
-
-        <div class="input-wrapper">
-
-          <select id="setSelector">
-            <option value="1">
-              Loading sets...
-            </option>
-          </select>
-
-        </div>
-
-        <div class="input-wrapper">
-
-          <input
-            type="number"
-            id="startNumber"
-            min="1"
-            placeholder="1"
-          >
-
-        </div>
-
-        <button
-          class="btn-start"
-          id="startQuizBtn"
+        <div
+          class="card-title card-title-new"
+          id="anneMainBtn"
+          style="cursor:pointer;"
         >
-          ▶ START
-        </button>
-
-        <div class="card-hint">
-          Select a lesson to begin.
+          ANNE - Quiz
         </div>
+
+        <div
+          id="licenseSetArea"
+          hidden
+        ></div>
 
       </div>
 
@@ -569,32 +542,7 @@
         class="card card-resume"
         id="resumeCard"
         hidden
-      >
-
-        <div class="card-icon">
-          ⏳
-        </div>
-
-        <div class="card-title card-title-resume">
-          RESUME
-        </div>
-
-        <div class="card-sub card-sub-resume">
-          Continue previous session
-        </div>
-
-        <div id="savedBadgeContainer">
-
-          <div class="no-session">
-            No saved session
-            <small>
-              Start a new lesson
-            </small>
-          </div>
-
-        </div>
-
-      </div>
+      ></div>
 
     </div>
 
@@ -612,24 +560,6 @@
   >
 
     <div
-      id="reviewBanner"
-      class="review-banner"
-      style="display:none;"
-    >
-      <span>
-        Review Mode
-      </span>
-
-      <button
-        id="exitReviewBtn"
-        class="exit-review-btn"
-      >
-        EXIT REVIEW
-      </button>
-    </div>
-
-
-    <div
       class="progress-area"
       style="display:none;"
     >
@@ -642,11 +572,6 @@
         ></div>
 
       </div>
-
-      <div
-        class="account-identity"
-        id="accountIdentity"
-      ></div>
 
     </div>
 
@@ -665,33 +590,13 @@
         <div id="explanationText"></div>
       </div>
 
-
       <div hidden>
 
-        <button
-          id="prevBtn"
-          type="button"
-        ></button>
-
-        <button
-          id="skipBtn"
-          type="button"
-        ></button>
-
-        <button
-          id="nextBtn"
-          type="button"
-        ></button>
-
-        <button
-          id="submitBtn"
-          type="button"
-        ></button>
-
-        <button
-          id="quitBtn"
-          type="button"
-        ></button>
+        <button id="prevBtn" type="button"></button>
+        <button id="skipBtn" type="button"></button>
+        <button id="nextBtn" type="button"></button>
+        <button id="submitBtn" type="button"></button>
+        <button id="quitBtn" type="button"></button>
 
       </div>
 
