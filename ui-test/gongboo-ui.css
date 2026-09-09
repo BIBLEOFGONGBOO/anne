@@ -1281,3 +1281,127 @@ button{
 #playCard{
   padding-top:6px;
 }
+
+
+/* =========================================================
+   SUBBLOCK 9900 : ANNE HOME
+   ========================================================= */
+
+#setupSection{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  padding:24px 16px 90px;
+  box-sizing:border-box;
+}
+
+#setupSection .cards-container{
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+#setupSection .card-new{
+  width:min(100%, 760px);
+  min-height:520px;
+
+  margin:0 auto;
+  padding:52px 44px 60px;
+
+  box-sizing:border-box;
+
+  background:#fff;
+  border-radius:22px;
+
+  box-shadow:
+    0 8px 28px rgba(15,23,42,.08);
+
+  text-align:center;
+}
+
+#setupSection .card-icon{
+  margin:0 0 8px;
+
+  font-size:34px;
+  line-height:1;
+}
+
+#setupSection .card-title-new{
+  margin:0 0 10px;
+
+  font-size:24px;
+  line-height:1.25;
+  font-weight:800;
+
+  color:#263b55;
+}
+
+#licenseSetArea{
+  width:100%;
+  max-width:390px;
+
+  margin:0 auto;
+
+  text-align:left;
+}
+
+#licenseSetArea > div{
+  width:100% !important;
+}
+
+#licenseSetArea .date-item{
+  min-height:32px;
+
+  padding:6px 8px !important;
+
+  box-sizing:border-box;
+
+  font-size:15px !important;
+  line-height:20px;
+
+  color:#2c3e50 !important;
+}
+
+#licenseSetArea .date-item:hover{
+  background:#f5f9ff !important;
+}
+
+#setupSection .bottom-hint{
+  display:none;
+}
+
+
+/* MOBILE */
+
+@media (max-width:640px){
+
+  #setupSection{
+    padding:18px 10px 80px;
+  }
+
+  #setupSection .card-new{
+    width:100%;
+    min-height:500px;
+
+    padding:34px 18px 46px;
+
+    border-radius:18px;
+  }
+
+  #setupSection .card-icon{
+    font-size:30px;
+  }
+
+  #setupSection .card-title-new{
+    font-size:21px;
+  }
+
+  #licenseSetArea{
+    max-width:100%;
+  }
+
+  #licenseSetArea .date-item{
+    font-size:14px !important;
+  }
+
+}
