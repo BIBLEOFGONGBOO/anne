@@ -726,6 +726,11 @@
 
 <div hidden>
 
+  <select id="languageSelector">
+    <option value="EN">English</option>
+    <option value="KO">Korean</option>
+  </select>
+
   <button
     id="bibleExploreToggle"
     type="button"
@@ -756,159 +761,6 @@
     id="bibleHeaderActionRow"
   ></div>
 
-</div>
-
-<!-- SUBBLOCK 4300 : RESULT / REVIEW MODALS -->
-
-<div
-  id="resultModal"
-  class="modal"
->
-  <div class="modal-content">
-
-    <h2 style="text-align:center">
-      RESULT
-    </h2>
-
-    <div class="stats">
-
-      <div class="stat-card">
-        <div>CORRECT</div>
-        <div
-          class="stat-value"
-          id="correctCount"
-        >
-          0
-        </div>
-      </div>
-
-      <div class="stat-card">
-        <div>ACCURACY</div>
-        <div
-          class="stat-value"
-          id="accuracyRate"
-        >
-          0%
-        </div>
-      </div>
-
-    </div>
-
-    <div
-      id="resultGrid"
-      class="result-grid"
-    ></div>
-
-    <div class="button-group">
-
-      <button
-        id="retryAllBtn"
-        class="nav-btn btn-prev"
-      >
-        RETRY
-      </button>
-
-      <button
-        id="reviewWrongBtn"
-        class="nav-btn btn-warning"
-      >
-        REVIEW
-      </button>
-
-      <button
-        id="closeModalBtn"
-        class="nav-btn btn-prev"
-      >
-        CLOSE
-      </button>
-
-    </div>
-
-    <div id="loadNextContainer"></div>
-
-  </div>
-</div>
-
-
-<div
-  id="wrongModal"
-  class="modal"
->
-  <div
-    class="modal-content"
-    style="max-width:750px"
-  >
-
-    <h2 style="text-align:center">
-      REVIEW
-    </h2>
-
-    <div
-      id="wrongList"
-      class="wrong-list"
-    ></div>
-
-    <div class="button-group">
-
-      <button
-        id="retryWrongFromReviewBtn"
-        class="nav-btn btn-warning"
-      >
-        RETRY WRONG ONLY
-      </button>
-
-      <button
-        id="closeWrongBtn"
-        class="nav-btn btn-prev"
-      >
-        CLOSE
-      </button>
-
-    </div>
-
-  </div>
-</div>
-
-<!-- SUBBLOCK 4350 : PROGRESS MODAL -->
-
-<div
-  id="progressModal"
-  class="modal"
-  style="display:none;"
->
-  <div
-    class="modal-content"
-    style="max-width:500px;text-align:center;border-radius:16px;padding:30px;"
-  >
-
-    <div
-      id="progressModalBody"
-      style="text-align:left;margin:10px 0;line-height:1.8;font-size:16px;"
-    ></div>
-
-    <div
-      style="display:flex;justify-content:center;gap:12px;margin-top:25px;"
-    >
-
-      <button
-        id="progressContinueBtn"
-        class="nav-btn"
-        style="flex:1;max-width:180px;padding:12px 24px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:#27ae60;color:#fff;"
-      >
-        ▶ Continue
-      </button>
-
-      <button
-        id="progressCancelBtn"
-        class="nav-btn"
-        style="flex:1;max-width:180px;padding:12px 24px;font-size:16px;font-weight:700;border:none;border-radius:12px;cursor:pointer;background:#e74c3c;color:#fff;"
-      >
-        Start Fresh
-      </button>
-
-    </div>
-
-  </div>
 </div>
 
   
