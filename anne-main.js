@@ -4964,6 +4964,63 @@ function stopAnneRecognition() {
 }
 
 
+// SUBBLOCK 1110-05
+// ============================================================
+// MIC RECOGNITION FINALIZE
+// ============================================================
+
+function finalizeAnneMicRecognition(
+  manualButton
+) {
+
+  if (_anneMicRecognizeTimer) {
+
+    clearTimeout(
+      _anneMicRecognizeTimer
+    );
+
+    _anneMicRecognizeTimer =
+      null;
+  }
+
+  var recognition =
+    ANNE_STATE.recognition;
+
+  if (!recognition) {
+    return;
+  }
+
+  var scoreEl =
+    document.getElementById(
+      'anneMicScore'
+    );
+
+  if (scoreEl) {
+
+    scoreEl.textContent =
+      manualButton
+        ? 'Recognizing...'
+        : 'Checking...';
+
+    scoreEl.style.color =
+      '#2563eb';
+  }
+
+  try {
+
+    recognition.stop();
+
+  } catch (e) {
+
+    console.warn(
+      '[MIC] finalize stop failed:',
+      e
+    );
+  }
+}
+
+
+
 // SUBBLOCK 1111
 // ============================================================
 // Recognition 생성 및 시작
