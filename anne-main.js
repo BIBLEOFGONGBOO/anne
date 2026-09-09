@@ -4761,6 +4761,170 @@ function showAnneMicScore(
       : '#b45309';
 }
 
+
+// SUBBLOCK 1109-05
+// ============================================================
+// MIC 맞은 단어 Highlight
+// ============================================================
+
+function highlightAnneMicWords(
+  sentence,
+  spokenText
+) {
+
+  if (!sentence) {
+    return;
+  }
+
+  var targetText =
+    normalizeAnneMicText(
+      sentence.text,
+      sentence.code
+    );
+
+  var visibleLines =
+    Array.from(
+      document.querySelectorAll(
+        '.anne-full-diary ' +
+        '.language-line[data-language="' +
+        sentence.code +
+        '"]'
+      )
+    );
+
+  var sentenceEl =
+    visibleLines.find(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        if (
+          rect.width <= 0 ||
+          rect.height <= 0
+        ) {
+          return false;
+        }
+
+        var lineText =
+          normalizeAnneMicText(
+            el.textContent,
+            sentence.code
+          );
+
+        return (
+          lineText ===
+          targetText
+        );
+      }
+    );
+
+  if (!sentenceEl) {
+    sentenceEl =
+      sentence.element;
+  }
+
+  if (!sentenceEl) {
+    return;
+  }
+
+  var original =
+    String(
+      sentenceEl.textContent || ''
+    );
+
+  var spoken =
+    String(
+      spokenText || ''
+    );
+
+  var originalWords =
+    original.match(/\S+/g) || [];
+
+  var spokenWords =
+    spoken.match(/\S+/g) || [];
+
+  var normalizedSpoken =
+    spokenWords.map(
+      function(word) {
+        return normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+      }
+    );
+
+  var used =
+    new Array(
+      normalizedSpoken.length
+    ).fill(false);
+
+  sentenceEl.innerHTML = '';
+
+  originalWords.forEach(
+    function(word, index) {
+
+      var normalizedWord =
+        normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+
+      var matchedIndex = -1;
+
+      for (
+        var i = 0;
+        i < normalizedSpoken.length;
+        i++
+      ) {
+
+        if (
+          !used[i] &&
+          normalizedWord &&
+          normalizedWord ===
+            normalizedSpoken[i]
+        ) {
+          matchedIndex = i;
+          break;
+        }
+      }
+
+      var span =
+        document.createElement(
+          'span'
+        );
+
+      span.textContent = word;
+
+      if (matchedIndex >= 0) {
+
+        used[matchedIndex] = true;
+
+        span.style.background =
+          '#fde047';
+
+        span.style.borderRadius =
+          '3px';
+
+        span.style.padding =
+          '0 2px';
+      }
+
+      sentenceEl.appendChild(span);
+
+      if (
+        index <
+        originalWords.length - 1
+      ) {
+        sentenceEl.appendChild(
+          document.createTextNode(' ')
+        );
+      }
+    }
+  );
+}
+
+
 // SUBBLOCK 1110
 // ============================================================
 // 현재 Recognition 완전 중지
