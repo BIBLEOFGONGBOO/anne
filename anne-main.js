@@ -4799,56 +4799,6 @@ function stopAnneRecognition() {
   }
 }
 
-// SUBBLOCK 1110-05
-// ============================================================
-// MIC RECOGNITION FINALIZE
-// ============================================================
-
-function finalizeAnneMicRecognition(
-  manualButton
-) {
-
-  if (_anneMicRecognizeTimer) {
-
-    clearTimeout(
-      _anneMicRecognizeTimer
-    );
-
-    _anneMicRecognizeTimer =
-      null;
-  }
-
-
-  if (
-    !ANNE_STATE.micMode
-  ) {
-    return;
-  }
-
-
-  var recognition =
-    ANNE_STATE.recognition;
-
-
-  if (!recognition) {
-    return;
-  }
-
-
-  try {
-
-    recognition.stop();
-
-  } catch (e) {
-
-    console.warn(
-      '[MIC] finalize stop failed:',
-      e
-    );
-
-  }
-}
-
 
 // SUBBLOCK 1111
 // ============================================================
