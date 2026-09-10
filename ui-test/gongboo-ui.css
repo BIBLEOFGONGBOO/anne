@@ -142,16 +142,16 @@ button{
   padding:0 13px;
 
   border:
-    1px solid var(--gb-accent);
+    1px solid var(--gb-border);
 
   border-radius:
     var(--gb-radius);
 
   background:
-    linear-gradient(180deg,#2d7fe7 0%,#1769d2 100%);
+    var(--gb-surface);
 
   color:
-    #ffffff;
+    #20252c;
 
   font-size:12px;
   font-weight:900;
@@ -174,7 +174,7 @@ button{
 
 .gb-chevron{
   font-size:8px;
-  color:#ffffff;
+  color:var(--gb-muted);
 }
 
 .gb-tool-button-square{
@@ -186,7 +186,7 @@ button{
 
 .gb-tool-button:hover{
   background:
-    #1659b8;
+    var(--gb-soft);
 }
 
 .gb-tool-button.is-active,
@@ -218,7 +218,7 @@ button{
   width:28px;
   padding:0;
   border-radius:0 var(--gb-radius) var(--gb-radius) 0;
-  color:#ffffff;
+  color:var(--gb-muted);
   font-size:8px;
 }
 
@@ -229,6 +229,21 @@ button{
   background:linear-gradient(180deg,#ef3038,var(--gb-stop));
 }
 
+
+/* Frequent manual scoring sits directly below the active MIC control. */
+.gb-mic-recognize-quick{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  width:100%;
+  min-width:0;
+  z-index:2001;
+}
+
+/* Keep the settings card below the quick action when both are open. */
+#micControlWrap.is-mic-active #micCard{
+  top:calc(100% + 52px);
+}
 
 /* SUBBLOCK 1500 : COMMON CARD */
 

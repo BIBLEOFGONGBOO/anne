@@ -523,6 +523,27 @@ if(playStopButton){
         running ? '■ STOP' : 'MIC';
     }
 
+    var quickRecognize =
+      document.getElementById(
+        'micRecognizeQuickButton'
+      );
+
+    var micWrap =
+      document.getElementById(
+        'micControlWrap'
+      );
+
+    if(quickRecognize){
+      quickRecognize.hidden = !running;
+    }
+
+    if(micWrap){
+      micWrap.classList.toggle(
+        'is-mic-active',
+        !!running
+      );
+    }
+
     if(micStartButton){
 
       micStartButton.setAttribute(
@@ -1282,7 +1303,7 @@ var templateMicAuto =
 
 var templateMicRecognize =
   document.getElementById(
-    'micRecognizeButton'
+    'micRecognizeQuickButton'
   );
 
 var templatePass =

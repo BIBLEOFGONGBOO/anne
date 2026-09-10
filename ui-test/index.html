@@ -18,7 +18,7 @@
 
   <link
     rel="stylesheet"
-    href="./gongboo-ui.css?v=template2-9"
+    href="./gongboo-ui.css?v=template2-10"
   />
 
   <link
@@ -257,7 +257,10 @@
 
 
         <!-- SUBBLOCK 2500 : MIC -->
-        <div class="gb-card-wrap gb-split-wrap">
+        <div
+          id="micControlWrap"
+          class="gb-card-wrap gb-split-wrap"
+        >
 
           <div class="gb-split-control">
             <button
@@ -341,14 +344,6 @@
             <div class="gb-one-action">
 
               <button
-                id="micRecognizeButton"
-                class="gb-compact-action"
-                type="button"
-              >
-                RECOGNIZE
-              </button>
-
-              <button
                 id="micAutoToggle"
                 class="gb-compact-toggle"
                 type="button"
@@ -359,6 +354,15 @@
 
             </div>
           </div>
+
+          <button
+            id="micRecognizeQuickButton"
+            class="gb-tool-button gb-mic-recognize-quick"
+            type="button"
+            hidden
+          >
+            RECOGNIZE
+          </button>
         </div>
 
 
@@ -698,8 +702,8 @@
   
 <!-- SUBBLOCK 4500 : SCRIPT LOAD / PAGE CLOSE -->
 
-<script src="./gongboo-ui.js?v=template2-9"></script>
-<script src="./anne-main.js?v=template2-9"></script>
+<script src="./gongboo-ui.js?v=template2-10"></script>
+<script src="./anne-main.js?v=template2-10"></script>
 
 </body>
 </html>
