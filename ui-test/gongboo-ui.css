@@ -733,11 +733,17 @@ button{
 /* STD와 같은 깨끗한 HOVER */
 
 .gb-more-grid-button:hover:not(:disabled){
-  background:
-    #f7f9fb;
+  background:#eef6ff;
+  border-color:var(--gb-accent);
+  transform:translateY(-1px);
+  box-shadow:0 3px 8px rgba(23,105,210,.16);
+}
 
-  border-color:
-    var(--gb-accent);
+.gb-mode-button:hover:not(:disabled){
+  background:#eef6ff;
+  border-color:var(--gb-accent);
+  transform:translateY(-1px);
+  box-shadow:0 3px 8px rgba(23,105,210,.16);
 }
 
 
@@ -961,6 +967,13 @@ button{
 
   box-shadow:
     0 3px 8px rgba(23,105,210,.28);
+}
+
+/* PSG has one visual contract: the same clear blue as the other selected tools. */
+#biblePassageToggle,
+#biblePassageToggle.active,
+#biblePassageToggle[aria-pressed="true"]{
+  filter:none !important;
 }
 
 

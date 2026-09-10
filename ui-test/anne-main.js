@@ -2195,6 +2195,11 @@ function syncAnneToggleButtons() {
       psgOn ? '700' : '',
       'important'
     );
+
+    // PSG must use the shared active blue without a legacy dimming filter.
+    p.style.removeProperty(
+      'filter'
+    );
   }
 
   if (q) {

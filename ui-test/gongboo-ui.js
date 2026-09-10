@@ -405,6 +405,63 @@ function setPlayState(
 window.gongbooSetPlayActive =
   setPlayState;
 
+function isPlayActive(){
+
+  var button =
+    document.getElementById(
+      'playButton'
+    );
+
+  var browserIsSpeaking =
+    'speechSynthesis' in window &&
+    (
+      window.speechSynthesis.speaking ||
+      window.speechSynthesis.pending
+    );
+
+  return (
+    isPlaying ||
+    browserIsSpeaking ||
+    !!(
+      button &&
+      button.getAttribute(
+        'aria-pressed'
+      ) === 'true'
+    )
+  );
+}
+
+function toggleTemplatePlay(){
+
+  var adapter =
+    window.GongbooTemplateAdapter || {};
+
+  if(isPlayActive()){
+
+    if(typeof adapter.stopPlay === 'function'){
+      adapter.stopPlay();
+    }else if(typeof stopSpeech === 'function'){
+      stopSpeech();
+    }
+
+    setPlayState(false);
+    return;
+  }
+
+  setPlayState(true);
+
+  if(typeof adapter.startPlay === 'function'){
+    adapter.startPlay();
+  }else if(typeof speakWithDyslexiaSupport === 'function'){
+    speakWithDyslexiaSupport();
+  }else{
+    setPlayState(false);
+  }
+}
+
+window.gongbooTogglePlay =
+  toggleTemplatePlay;
+
 var playButton =
   document.getElementById('playButton');
 
@@ -414,30 +471,7 @@ if(playButton){
     function(event){
       event.stopPropagation();
 
-      if(typeof window.gongbooCloseCards === 'function'){
-        window.gongbooCloseCards();
-      }
-
-      var adapter =
-        window.GongbooTemplateAdapter || {};
-
-      if(isPlaying){
-        if(typeof adapter.stopPlay === 'function'){
-          adapter.stopPlay();
-        }else if(typeof stopSpeech === 'function'){
-          stopSpeech();
-        }
-        setPlayState(false);
-        return;
-      }
-
-      if(typeof adapter.startPlay === 'function'){
-        setPlayState(true);
-        adapter.startPlay();
-      }else if(typeof speakWithDyslexiaSupport === 'function'){
-        setPlayState(true);
-        speakWithDyslexiaSupport();
-      }
+      toggleTemplatePlay();
     }
   );
 }
