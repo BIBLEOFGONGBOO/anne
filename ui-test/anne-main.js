@@ -4947,6 +4947,64 @@ function positionAnneMicPanel() {
 
 // SUBBLOCK 1109
 // ============================================================
+// MIC 인식 마감
+// 결과가 잠시 멈추면 recognition.onend에서 채점·자동 진행한다.
+// BIBLE의 검증된 흐름과 동일하게 stop만 요청하고, onend를 지우지 않는다.
+// ============================================================
+
+function finalizeAnneMicRecognition(
+  manualButton
+) {
+
+  if (_anneMicRecognizeTimer) {
+
+    clearTimeout(
+      _anneMicRecognizeTimer
+    );
+
+    _anneMicRecognizeTimer =
+      null;
+  }
+
+  var recognition =
+    ANNE_STATE.recognition;
+
+  if (!recognition) {
+    return;
+  }
+
+  var scoreEl =
+    document.getElementById(
+      'anneMicScore'
+    );
+
+  if (scoreEl) {
+
+    scoreEl.textContent =
+      manualButton
+        ? 'Recognizing...'
+        : 'Checking...';
+
+    scoreEl.style.color =
+      '#2563eb';
+  }
+
+  try {
+
+    recognition.stop();
+
+  } catch (e) {
+
+    console.warn(
+      '[MIC] finalize stop failed:',
+      e
+    );
+  }
+}
+
+// ============================================================
+// SUBBLOCK 1109
+// ============================================================
 // MIC 결과 표시
 // 실제 값은 hidden score에 기록
 // 1107이 STOP 버튼 오른쪽에 % 표시
@@ -7468,5 +7526,10 @@ window.GongbooTemplateAdapter = {
   startPlay: speakWithDyslexiaSupport,
   stopPlay: stopSpeech,
   startMic: turnAnneMicOn,
-  stopMic: turnAnneMicOff
+  stopMic: turnAnneMicOff,
+  finalizeMic: finalizeAnneMicRecognition
 };
+
+// Public bridge used by the shared Template UI and console diagnostics.
+window.finalizeAnneMicRecognition =
+  finalizeAnneMicRecognition;
