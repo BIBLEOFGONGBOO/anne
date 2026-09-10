@@ -1280,6 +1280,11 @@ var templateMicAuto =
     'micAutoToggle'
   );
 
+var templateMicRecognize =
+  document.getElementById(
+    'micRecognizeButton'
+  );
+
 var templatePass =
   document.getElementById(
     'passRange'
@@ -1447,6 +1452,42 @@ if(templateMicAuto){
   );
 }
 
+
+// ============================================================
+// RECOGNIZE
+// Finalize the current utterance without turning MIC off.
+// ============================================================
+
+if(templateMicRecognize){
+
+  templateMicRecognize.addEventListener(
+    'click',
+    function(){
+
+      if(
+        typeof window.finalizeAnneMicRecognition ===
+        'function'
+      ){
+
+        window.finalizeAnneMicRecognition(
+          true
+        );
+      }
+
+      templateMicRecognize.setAttribute(
+        'aria-pressed',
+        'true'
+      );
+
+      setTimeout(function(){
+        templateMicRecognize.setAttribute(
+          'aria-pressed',
+          'false'
+        );
+      }, 180);
+    }
+  );
+}
 
 // ============================================================
 // START
