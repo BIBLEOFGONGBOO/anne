@@ -3520,6 +3520,90 @@ var _anneMicLastTranscript = '';
 var _anneMicCurrentRecognition = null;
 var _anneMicPassageIndex = 0;
 
+// A passage sentence is a direct MIC navigation target. Capture the tap
+// before quiz/content handlers so a learner can repeat or skip reliably.
+document.addEventListener(
+  'click',
+  function(event) {
+    if (!ANNE_STATE.micMode) {
+      return;
+    }
+
+    var line =
+      event.target.closest(
+        '.anne-full-diary .language-line'
+      );
+
+    if (!line) {
+      return;
+    }
+
+    var langInfo =
+      getAnneMicLanguage();
+
+    if (
+      line.getAttribute('data-language') !==
+      langInfo.code
+    ) {
+      return;
+    }
+
+    var lines =
+      Array.from(
+        document.querySelectorAll(
+          '.anne-full-diary .language-line[data-language="' +
+          langInfo.code +
+          '"]'
+        )
+      ).filter(function(item) {
+        var rect = item.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+
+    var index = lines.indexOf(line);
+    if (index < 0) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    _anneMicPassageIndex = index;
+    _anneMicLastTranscript = '';
+
+    lines.forEach(function(item, itemIndex) {
+      item.style.outline =
+        itemIndex === index
+          ? '2px solid #facc15'
+          : '';
+      item.style.outlineOffset =
+        itemIndex === index ? '2px' : '';
+      item.style.borderRadius =
+        itemIndex === index ? '4px' : '';
+      item.style.cursor = 'pointer';
+    });
+
+    if (_anneMicRecognizeTimer) {
+      clearTimeout(_anneMicRecognizeTimer);
+      _anneMicRecognizeTimer = null;
+    }
+
+    _anneMicMoving = true;
+    if (ANNE_STATE.recognition) {
+      try {
+        ANNE_STATE.recognition.stop();
+      } catch (_) {}
+    }
+
+    window.setTimeout(function() {
+      _anneMicMoving = false;
+      if (ANNE_STATE.micMode) {
+        startAnneRecognition();
+      }
+    }, 180);
+  },
+  true
+);
+
 window.__micRecognizeDelay =
   Number(
     localStorage.getItem(
@@ -5608,6 +5692,12 @@ function turnAnneMicOn() {
 
   ANNE_STATE.micMode =
     true;
+  if (
+    typeof window.gongbooSetMicActive ===
+    'function'
+  ) {
+    window.gongbooSetMicActive(true);
+  }
   _anneMicPassageIndex = 0;
 
 
@@ -5664,6 +5754,12 @@ function turnAnneMicOff() {
 
   ANNE_STATE.micMode =
     false;
+  if (
+    typeof window.gongbooSetMicActive ===
+    'function'
+  ) {
+    window.gongbooSetMicActive(false);
+  }
 
 
   _anneMicMoving =
@@ -6449,6 +6545,12 @@ function stopSpeech() {
   }
   _isSpeaking =
     false;
+  if (
+    typeof window.gongbooSetPlayActive ===
+    'function'
+  ) {
+    window.gongbooSetPlayActive(false);
+  }
   _currentUtterance =
     null;
   _utteranceRefs =
@@ -6495,7 +6597,7 @@ function speakWithDyslexiaSupport() {
     !('speechSynthesis' in window)
   ) {
     alert(
-      '이 브라우저는 음성 읽기를 지원하지 않습니다.'
+      'This browser does not support speech playback.'
     );
     return;
   }
@@ -6506,6 +6608,12 @@ function speakWithDyslexiaSupport() {
       '[TTS] 화면에 읽을 문장이 없음'
     );
     return;
+  }
+  if (
+    typeof window.gongbooSetPlayActive ===
+    'function'
+  ) {
+    window.gongbooSetPlayActive(true);
   }
   var runId =
     ++_speechRunId;
@@ -6547,6 +6655,12 @@ function readTextsWithHighlight(
     );
     _isSpeaking = false;
     _currentUtterance = null;
+    if (
+      typeof window.gongbooSetPlayActive ===
+      'function'
+    ) {
+      window.gongbooSetPlayActive(false);
+    }
     if (
       window.__licenseSpeechState
     ) {
@@ -7330,3 +7444,12 @@ if (
     100
   );
 }
+
+// Template v2 product adapter. The common UI calls this small contract;
+// ANNE keeps all learning, highlighting, TTS, and MIC behavior here.
+window.GongbooTemplateAdapter = {
+  startPlay: speakWithDyslexiaSupport,
+  stopPlay: stopSpeech,
+  startMic: turnAnneMicOn,
+  stopMic: turnAnneMicOff
+};

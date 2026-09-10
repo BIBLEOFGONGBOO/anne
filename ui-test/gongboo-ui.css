@@ -104,6 +104,33 @@ button{
   position:relative;
 }
 
+.gb-split-control{
+  display:grid;
+  grid-template-columns:minmax(58px,1fr) 28px;
+}
+
+.gb-split-primary{
+  min-width:0;
+  border-radius:var(--gb-radius) 0 0 var(--gb-radius);
+  border-right:0;
+  padding:0 9px;
+}
+
+.gb-split-menu{
+  min-width:28px;
+  width:28px;
+  padding:0;
+  border-radius:0 var(--gb-radius) var(--gb-radius) 0;
+  color:var(--gb-muted);
+  font-size:8px;
+}
+
+.gb-split-primary[aria-pressed="true"]{
+  color:#ffffff;
+  border-color:var(--gb-stop-dark);
+  background:linear-gradient(180deg,#ef3038,var(--gb-stop));
+}
+
 
 /* SUBBLOCK 1000 : MAIN TOOL BUTTONS */
 
@@ -393,6 +420,21 @@ button{
   gap:6px;
 
   margin-top:8px;
+}
+
+.gb-two-actions,
+.gb-one-action{
+  display:grid;
+  gap:6px;
+  margin-top:8px;
+}
+
+.gb-two-actions{
+  grid-template-columns:repeat(2,1fr);
+}
+
+.gb-one-action{
+  grid-template-columns:1fr;
 }
 
 
@@ -1089,7 +1131,7 @@ button{
     display:grid;
 
     grid-template-columns:
-      .82fr .82fr 1fr 1fr .82fr .62fr;
+      .9fr .68fr .82fr 1.18fr 1.05fr .78fr .52fr;
 
     gap:4px;
   }
@@ -1104,6 +1146,25 @@ button{
       0 4px;
 
     font-size:11px;
+  }
+
+  .gb-split-wrap,
+  .gb-split-control{
+    width:100%;
+  }
+
+  .gb-split-control{
+    grid-template-columns:minmax(0,1fr) 24px;
+  }
+
+  .gb-split-primary,
+  .gb-split-menu{
+    min-width:0;
+  }
+
+  .gb-split-menu{
+    width:24px;
+    padding:0;
   }
 
   .gb-tool-button-square{
@@ -1166,7 +1227,7 @@ button{
 
   .gb-toolbar{
     grid-template-columns:
-      .78fr .78fr 1fr .95fr .78fr .58fr;
+      .88fr .66fr .78fr 1.18fr 1.02fr .74fr .5fr;
 
     gap:3px;
   }

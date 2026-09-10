@@ -5,8 +5,8 @@
   var cardPairs = [
     ['systemButton','systemCard'],
     ['langButton','langCard'],
-    ['playButton','playCard'],
-    ['micButton','micCard'],
+    ['playMenuButton','playCard'],
+    ['micMenuButton','micCard'],
     ['moreButton','moreCard']
   ];
 
@@ -25,10 +25,16 @@
       'Language settings',
 
     playButton:
-      'Playback and voice settings',
+      'Start or stop highlighted playback',
+
+    playMenuButton:
+      'Playback settings',
 
     micButton:
-      'Microphone and pronunciation settings',
+      'Start or stop microphone recognition',
+
+    micMenuButton:
+      'Microphone settings',
 
     moreButton:
       'More learning tools',
@@ -349,6 +355,27 @@ function setPlayState(
   isPlaying =
     !!playing;
 
+  var playButton =
+    document.getElementById('playButton');
+
+  var playButtonLabel =
+    document.getElementById('playButtonLabel');
+
+  if(playButton){
+    playButton.setAttribute(
+      'aria-pressed',
+      String(isPlaying)
+    );
+  }
+
+  window.gongbooCloseCards =
+    closeCards;
+
+  if(playButtonLabel){
+    playButtonLabel.textContent =
+      isPlaying ? '■ STOP' : '▶ PLAY';
+  }
+
 
   if(playStartButton){
 
@@ -366,6 +393,46 @@ function setPlayState(
       String(!isPlaying)
     );
   }
+}
+
+window.gongbooSetPlayActive =
+  setPlayState;
+
+var playButton =
+  document.getElementById('playButton');
+
+if(playButton){
+  playButton.addEventListener(
+    'click',
+    function(event){
+      event.stopPropagation();
+
+      if(typeof window.gongbooCloseCards === 'function'){
+        window.gongbooCloseCards();
+      }
+
+      var adapter =
+        window.GongbooTemplateAdapter || {};
+
+      if(isPlaying){
+        if(typeof adapter.stopPlay === 'function'){
+          adapter.stopPlay();
+        }else if(typeof stopSpeech === 'function'){
+          stopSpeech();
+        }
+        setPlayState(false);
+        return;
+      }
+
+      if(typeof adapter.startPlay === 'function'){
+        setPlayState(true);
+        adapter.startPlay();
+      }else if(typeof speakWithDyslexiaSupport === 'function'){
+        setPlayState(true);
+        speakWithDyslexiaSupport();
+      }
+    }
+  );
 }
 
 
@@ -431,6 +498,24 @@ if(playStopButton){
     running
   ){
 
+    var micButton =
+      document.getElementById('micButton');
+
+    var micButtonLabel =
+      document.getElementById('micButtonLabel');
+
+    if(micButton){
+      micButton.setAttribute(
+        'aria-pressed',
+        String(!!running)
+      );
+    }
+
+    if(micButtonLabel){
+      micButtonLabel.textContent =
+        running ? '■ STOP' : 'MIC';
+    }
+
     if(micStartButton){
 
       micStartButton.setAttribute(
@@ -450,6 +535,64 @@ if(playStopButton){
           : 'true'
       );
     }
+  }
+
+  window.gongbooSetMicActive =
+    setMicState;
+
+  var isMicRunning =
+    false;
+
+  var originalSetMicState =
+    setMicState;
+
+  setMicState = function(running){
+    isMicRunning = !!running;
+    originalSetMicState(isMicRunning);
+  };
+
+  window.gongbooSetMicActive =
+    setMicState;
+
+  var micButton =
+    document.getElementById('micButton');
+
+  if(micButton){
+    micButton.addEventListener(
+      'click',
+      function(event){
+        event.stopPropagation();
+
+        if(typeof window.gongbooCloseCards === 'function'){
+          window.gongbooCloseCards();
+        }
+
+        var running =
+          isMicRunning;
+
+        var adapter =
+          window.GongbooTemplateAdapter || {};
+
+        if(running){
+          if(typeof adapter.stopMic === 'function'){
+            adapter.stopMic();
+          }else if(typeof turnAnneMicOff === 'function'){
+            turnAnneMicOff();
+          }
+          setMicState(false);
+          return;
+        }
+
+        if(typeof adapter.startMic === 'function'){
+          adapter.startMic();
+          return;
+        }
+
+        if(typeof turnAnneMicOn === 'function'){
+          turnAnneMicOn();
+        }
+      }
+    );
   }
 
 
@@ -1373,121 +1516,6 @@ if(templateMicStop){
     }
   );
 }
-
-// SUBBLOCK 8250 : MIC CARD POSITION / SIZE
-// PLAY 버튼 위치를 덮는 현재 위치 유지
-// 카드 가로/세로 약 20% 추가 축소
-
-(function(){
-
-  var micButton =
-    document.getElementById(
-      'micButton'
-    );
-
-  var playButton =
-    document.getElementById(
-      'playButton'
-    );
-
-  var micCard =
-    document.getElementById(
-      'micCard'
-    );
-
-
-  if(
-    !micButton ||
-    !playButton ||
-    !micCard
-  ){
-    return;
-  }
-
-
-  function positionMicCard(){
-
-    if(
-      micCard.hidden
-    ){
-      return;
-    }
-
-
-    var playRect =
-      playButton.getBoundingClientRect();
-
-
-    var cardWidth =
-      micCard.offsetWidth;
-
-
-    var left =
-      playRect.right -
-      cardWidth;
-
-
-    var top =
-      playRect.top;
-
-
-    left =
-      Math.max(
-        6,
-        left
-      );
-
-
-    micCard.style.position =
-      'fixed';
-
-
-    micCard.style.left =
-      Math.round(
-        left
-      ) + 'px';
-
-
-    micCard.style.top =
-      Math.round(
-        top
-      ) + 'px';
-
-
-    micCard.style.right =
-      'auto';
-
-
-    micCard.style.zIndex =
-      '5000';
-  }
-
-
-  micButton.addEventListener(
-    'click',
-    function(){
-
-      window.setTimeout(
-        positionMicCard,
-        0
-      );
-    }
-  );
-
-
-  window.addEventListener(
-    'resize',
-    positionMicCard
-  );
-
-
-  window.addEventListener(
-    'scroll',
-    positionMicCard,
-    true
-  );
-
-})();
 
 // SUBBLOCK 8500 : MIC LEGACY BRIDGE / SCORE / HIGHLIGHT
 
