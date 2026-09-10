@@ -1,0 +1,709 @@
+<!-- SUBBLOCK 0000 : DOCUMENT / HEAD -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    GONGBOO EASY LEARNING
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="./gongboo-ui.css?v=template2-10"
+  />
+
+  <link
+    rel="stylesheet"
+    href="./anne-original.css"
+  />
+
+</head>
+
+<body>
+
+<div
+  id="mainContainer"
+  class="gb-app"
+>
+
+  <header class="gb-topbar">
+
+    <div class="gb-topbar-row">
+
+      <div class="gb-toolbar">
+
+
+
+
+        
+       <!-- SUBBLOCK 0500 : SYSTEM -->
+
+<div class="gb-card-wrap">
+
+  <button
+    id="systemButton"
+    class="gb-tool-button gb-system-button"
+    type="button"
+    aria-expanded="false"
+  >
+    EAS
+    <span class="gb-chevron">▼</span>
+  </button>
+
+  <div
+    id="systemCard"
+    class="gb-card gb-system-card"
+    hidden
+  >
+
+    <div class="gb-card-title">
+      SYSTEM
+    </div>
+
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://bibleofgongboo.github.io/conversation/'"
+    >
+      <span class="gb-system-code">CON</span>
+      <span class="gb-system-name">CONVERSATION</span>
+    </button>
+
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://bibleofgongboo.github.io/biblenew/'"
+    >
+      <span class="gb-system-code">BIB</span>
+      <span class="gb-system-name">BIBLE</span>
+    </button>
+
+    <button
+      class="gb-system-option is-active"
+      type="button"
+      aria-current="page"
+    >
+      <span class="gb-system-code">EAS</span>
+      <span class="gb-system-name">EASY LEARNING</span>
+    </button>
+
+    <button
+      class="gb-system-option"
+      type="button"
+      onclick="window.location.href='https://biblegongboo.github.io/license/app/'"
+    >
+      <span class="gb-system-code">LIC</span>
+      <span class="gb-system-name">LICENSE</span>
+    </button>
+
+  </div>
+
+</div>
+
+
+        <!-- SUBBLOCK 1500 : LANGUAGE -->
+
+<div class="gb-card-wrap">
+
+  <button
+    id="langButton"
+    class="gb-tool-button"
+    type="button"
+    aria-expanded="false"
+  >
+    LANG
+  </button>
+
+  <div
+    id="langCard"
+    class="gb-card"
+    hidden
+  >
+
+    <div class="gb-card-title">
+      LANGUAGE
+    </div>
+
+    <div class="gb-card-row">
+
+      <span class="gb-card-label">
+        PRIMARY
+      </span>
+
+      <select
+        id="biblePrimaryTextSelector"
+        class="gb-select"
+        aria-label="Primary language"
+      >
+        <option value="ENG">ENG</option>
+        <option value="KOR">KOR</option>
+        <option value="JPN">JPN</option>
+      </select>
+
+    </div>
+
+    <div class="gb-card-row">
+
+      <span class="gb-card-label">
+        SECONDARY
+      </span>
+
+      <select
+        id="bibleSecondaryTextSelector"
+        class="gb-select"
+        aria-label="Secondary language"
+      >
+        <option value="KOR">KOR</option>
+        <option value="ENG">ENG</option>
+        <option value="JPN">JPN</option>
+      </select>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+        <!-- SUBBLOCK 2000 : PLAY -->
+        <div class="gb-card-wrap gb-split-wrap">
+
+          <div class="gb-split-control">
+            <button
+              id="playButton"
+              class="gb-tool-button gb-split-primary"
+              type="button"
+              aria-pressed="false"
+            >
+              <span id="playButtonLabel">▶ PLAY</span>
+            </button>
+            <button
+              id="playMenuButton"
+              class="gb-tool-button gb-split-menu"
+              type="button"
+              aria-expanded="false"
+              aria-controls="playCard"
+            >
+              <span aria-hidden="true">▼</span>
+            </button>
+          </div>
+
+          <div
+            id="playCard"
+            class="gb-card"
+            hidden
+          >
+            <div class="gb-card-title">
+              PLAY
+            </div>
+
+            <div class="gb-slider-row">
+
+              <span class="gb-slider-label">
+                SPEED
+              </span>
+
+              <input
+                id="speedRange"
+                class="gb-range"
+                type="range"
+                min="0.25"
+                max="2"
+                step="0.05"
+                value="1"
+              />
+
+              <span
+                id="speedValue"
+                class="gb-slider-value"
+              >
+                1.00×
+              </span>
+
+            </div>
+
+            <div class="gb-two-actions">
+
+              <button
+                id="repeatToggle"
+                class="gb-compact-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                REPEAT
+              </button>
+
+              <button
+                id="playAutoToggle"
+                class="gb-compact-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                AUTO
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+
+        <!-- SUBBLOCK 2500 : MIC -->
+        <div
+          id="micControlWrap"
+          class="gb-card-wrap gb-split-wrap"
+        >
+
+          <div class="gb-split-control">
+            <button
+              id="micButton"
+              class="gb-tool-button gb-split-primary"
+              type="button"
+              aria-pressed="false"
+            >
+              <span id="micButtonLabel">MIC</span>
+            </button>
+            <button
+              id="micMenuButton"
+              class="gb-tool-button gb-split-menu"
+              type="button"
+              aria-expanded="false"
+              aria-controls="micCard"
+            >
+              <span aria-hidden="true">▼</span>
+            </button>
+          </div>
+
+          <div
+            id="micCard"
+            class="gb-card"
+            hidden
+          >
+            <div class="gb-card-title">
+              MIC
+            </div>
+
+            <div class="gb-slider-row">
+
+              <span class="gb-slider-label">
+                PASS
+              </span>
+
+              <input
+                id="passRange"
+                class="gb-range"
+                type="range"
+                min="50"
+                max="100"
+                step="1"
+                value="70"
+              />
+
+              <span
+                id="passValue"
+                class="gb-slider-value"
+              >
+                70%
+              </span>
+
+            </div>
+
+            <div class="gb-slider-row">
+
+              <span class="gb-slider-label">
+                DELAY
+              </span>
+
+              <input
+                id="delayRange"
+                class="gb-range"
+                type="range"
+                min="0"
+                max="5"
+                step="0.1"
+                value="2"
+              />
+
+              <span
+                id="delayValue"
+                class="gb-slider-value"
+              >
+                2.0s
+              </span>
+
+            </div>
+
+            <div class="gb-one-action">
+
+              <button
+                id="micAutoToggle"
+                class="gb-compact-toggle"
+                type="button"
+                aria-pressed="false"
+              >
+                AUTO
+              </button>
+
+            </div>
+          </div>
+
+          <button
+            id="micRecognizeQuickButton"
+            class="gb-tool-button gb-mic-recognize-quick"
+            type="button"
+            hidden
+          >
+            RECOGNIZE
+          </button>
+        </div>
+
+
+        <!-- SUBBLOCK 2700 : PSG / QUIZ -->
+        <div class="gb-card-wrap gb-split-wrap">
+          <div class="gb-split-control">
+            <button
+              id="biblePassageToggle"
+              class="gb-tool-button gb-split-primary"
+              type="button"
+              aria-pressed="false"
+            >
+              PSG
+            </button>
+            <button
+              id="psgMenuButton"
+              class="gb-tool-button gb-split-menu"
+              type="button"
+              aria-expanded="false"
+              aria-controls="psgCard"
+            >
+              <span aria-hidden="true">▼</span>
+            </button>
+          </div>
+
+          <div id="psgCard" class="gb-card gb-psg-card" hidden>
+            <div class="gb-card-title">PASSAGE</div>
+            <button
+              id="bibleQuizToggle"
+              class="gb-card-toggle"
+              type="button"
+              aria-pressed="true"
+            >
+              QUIZ
+            </button>
+          </div>
+        </div>
+
+
+        <!-- SUBBLOCK 3000 : MORE / MODE -->
+
+<div class="gb-card-wrap">
+
+  <button
+    id="moreButton"
+    class="gb-tool-button gb-tool-button-square"
+    type="button"
+    aria-expanded="false"
+  >
+    ⋯
+  </button>
+
+  <div
+    id="moreCard"
+    class="gb-card"
+    hidden
+  >
+
+    <div class="gb-card-title">
+      MODE
+    </div>
+
+    <div
+      id="modeButtons"
+      class="gb-mode-row"
+    >
+
+      <button
+        class="gb-mode-button mode-btn mode-learn"
+        type="button"
+        data-ui-mode="learn"
+      >
+        LRN
+      </button>
+
+      <button
+        class="gb-mode-button mode-btn mode-study"
+        type="button"
+        data-ui-mode="study"
+      >
+        STD
+      </button>
+
+      <button
+        class="gb-mode-button mode-btn mode-exam"
+        type="button"
+        data-ui-mode="exam"
+      >
+        EXM
+      </button>
+
+    </div>
+
+    <div class="gb-card-separator"></div>
+
+    <div class="gb-more-grid">
+
+      <button
+        id="bibleGuideToggle"
+        class="gb-more-grid-button"
+        type="button"
+        aria-pressed="false"
+      >
+        CHUNK
+      </button>
+
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
+
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
+
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
+
+      <button
+        class="gb-more-grid-button"
+        type="button"
+        disabled
+      >
+        OPTION
+      </button>
+
+    </div>
+
+    <div class="gb-card-separator"></div>
+
+    <button
+      class="gb-login-button"
+      type="button"
+      disabled
+    >
+      LOGIN
+    </button>
+
+  </div>
+
+</div>
+
+      </div>
+    </div>
+  </header>
+
+
+<!-- SUBBLOCK 3500 : ANNE CONTENT HOST -->
+
+<main class="gb-content">
+
+  <section
+    id="setupSection"
+    class="setup-area"
+  >
+
+    <div class="cards-container">
+
+      <div class="card card-new">
+
+        <div
+          id="resumeQuickContainer"
+          class="resume-quick"
+          hidden
+        ></div>
+
+        <div class="card-icon">
+          📖
+        </div>
+
+        <div
+          class="card-title card-title-new"
+          id="anneMainBtn"
+          style="cursor:pointer;"
+        >
+          ANNE - Quiz
+        </div>
+
+        <div
+          id="licenseSetArea"
+          hidden
+        ></div>
+
+      </div>
+
+
+      <div
+        class="card card-resume"
+        id="resumeCard"
+        hidden
+      ></div>
+
+    </div>
+
+    <div class="bottom-hint">
+      Progress is saved automatically
+    </div>
+
+  </section>
+
+
+  <section
+    id="quizMain"
+    class="quiz-main"
+    style="display:none;"
+  >
+
+    <div
+      class="progress-area"
+      style="display:none;"
+    >
+
+      <div class="progress-bar-container">
+
+        <div
+          class="progress-bar"
+          id="quizProgressBar"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="quizContent"
+      style="display:none;"
+    >
+
+      <div id="questionContainer"></div>
+
+      <div
+        id="explanationBox"
+        class="explanation"
+      >
+        <div id="explanationText"></div>
+      </div>
+
+      <div hidden>
+
+        <button id="prevBtn" type="button"></button>
+        <button id="skipBtn" type="button"></button>
+        <button id="nextBtn" type="button"></button>
+        <button id="submitBtn" type="button"></button>
+        <button id="quitBtn" type="button"></button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- SUBBLOCK 4000 : PREV / NEXT -->
+
+<footer class="gb-bottom-nav">
+
+  <button
+    id="prevButton"
+    class="gb-nav-button"
+    type="button"
+  >
+    ◀ PREV
+  </button>
+
+  <button
+    id="nextButton"
+    class="gb-nav-button"
+    type="button"
+  >
+    NEXT ▶
+  </button>
+
+</footer>
+
+</div>
+
+<!-- SUBBLOCK 4250 : ANNE LEGACY COMPATIBILITY -->
+
+<div hidden>
+
+  <div id="satTutorPanel"></div>
+
+  <div class="sat-title"></div>
+
+  <select id="languageSelector">
+    <option value="EN">English</option>
+    <option value="KO">Korean</option>
+  </select>
+
+  <button
+    id="bibleExploreToggle"
+    type="button"
+  ></button>
+
+  <button
+    id="biblePeopleToggle"
+    type="button"
+  ></button>
+
+  <button
+    id="bibleLogoutToggle"
+    type="button"
+  ></button>
+
+  <button
+    id="timerToggle"
+    type="button"
+    aria-expanded="false"
+  ></button>
+
+  <section
+    id="timerPanel"
+    hidden
+  ></section>
+
+  <div
+    id="bibleHeaderActionRow"
+  ></div>
+
+</div>
+
+  
+<!-- SUBBLOCK 4500 : SCRIPT LOAD / PAGE CLOSE -->
+
+<script src="./gongboo-ui.js?v=template2-10"></script>
+<script src="./anne-main.js?v=template2-10"></script>
+
+</body>
+</html>
