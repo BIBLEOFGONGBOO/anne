@@ -92,6 +92,23 @@ button{
   padding:7px 0;
 }
 
+/* Deliberately non-sticky: it introduces the site, then yields space to study. */
+.gb-brand-strip{
+  width:min(
+    calc(100% - 24px),
+    var(--gb-content-width)
+  );
+
+  margin:10px auto 0;
+
+  color:#556273;
+
+  font-size:18px;
+  font-weight:850;
+  letter-spacing:.09em;
+  text-align:center;
+}
+
 .gb-toolbar{
   display:flex;
   align-items:center;
