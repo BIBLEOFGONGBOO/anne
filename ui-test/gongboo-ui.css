@@ -203,6 +203,30 @@ button{
     0 0 0 1px rgba(23,105,210,.08);
 }
 
+/* Split action overrides must follow the common button rule. */
+.gb-split-control .gb-tool-button.gb-split-primary{
+  min-width:58px;
+  width:auto;
+  padding:0 8px;
+  border-radius:var(--gb-radius) 0 0 var(--gb-radius);
+  border-right:0;
+}
+
+.gb-split-control .gb-tool-button.gb-split-menu{
+  min-width:28px;
+  width:28px;
+  padding:0;
+  border-radius:0 var(--gb-radius) var(--gb-radius) 0;
+  color:var(--gb-muted);
+  font-size:8px;
+}
+
+.gb-split-control .gb-tool-button.gb-split-primary[aria-pressed="true"]{
+  color:#ffffff;
+  border-color:var(--gb-stop-dark);
+  background:linear-gradient(180deg,#ef3038,var(--gb-stop));
+}
+
 
 /* SUBBLOCK 1500 : COMMON CARD */
 
@@ -1162,7 +1186,14 @@ button{
     min-width:0;
   }
 
-  .gb-split-menu{
+  .gb-split-control .gb-tool-button.gb-split-primary{
+    min-width:0;
+    width:auto;
+    padding:0 3px;
+  }
+
+  .gb-split-control .gb-tool-button.gb-split-menu{
+    min-width:24px;
     width:24px;
     padding:0;
   }
