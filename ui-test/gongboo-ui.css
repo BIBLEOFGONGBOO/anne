@@ -125,7 +125,8 @@ button{
   font-size:8px;
 }
 
-.gb-split-primary[aria-pressed="true"]{
+#playButton[aria-pressed="true"],
+#micButton[aria-pressed="true"]{
   color:#ffffff;
   border-color:var(--gb-stop-dark);
   background:linear-gradient(180deg,#ef3038,var(--gb-stop));
@@ -221,7 +222,8 @@ button{
   font-size:8px;
 }
 
-.gb-split-control .gb-tool-button.gb-split-primary[aria-pressed="true"]{
+.gb-split-control #playButton.gb-split-primary[aria-pressed="true"],
+.gb-split-control #micButton.gb-split-primary[aria-pressed="true"]{
   color:#ffffff;
   border-color:var(--gb-stop-dark);
   background:linear-gradient(180deg,#ef3038,var(--gb-stop));
@@ -577,8 +579,7 @@ button{
 
 /* STOP ACTIVE */
 
-#playStopButton[aria-pressed="true"],
-#micStopButton[aria-pressed="true"]{
+#playStopButton[aria-pressed="true"]{
   color:#ffffff;
 
   border-color:
@@ -933,8 +934,7 @@ button{
 
 /* STOP은 위험 동작이므로 RED 유지 */
 
-#playStopButton[aria-pressed="true"],
-#micStopButton[aria-pressed="true"]{
+#playStopButton[aria-pressed="true"]{
 
   color:#ffffff;
 
