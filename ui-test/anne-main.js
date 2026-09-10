@@ -3519,53 +3519,6 @@ var _anneMicRecognizeTimer = null;
 var _anneMicLastTranscript = '';
 var _anneMicCurrentRecognition = null;
 var _anneMicPassageIndex = 0;
-var _anneMicPermissionPending = false;
-
-function startAnneMicWithPermission() {
-  if (_anneMicPermissionPending) {
-    return;
-  }
-
-  if (
-    !navigator.mediaDevices ||
-    typeof navigator.mediaDevices.getUserMedia !==
-    'function'
-  ) {
-    startAnneRecognition();
-    return;
-  }
-
-  _anneMicPermissionPending = true;
-
-  navigator.mediaDevices.getUserMedia({ audio:true })
-    .then(function(stream) {
-      stream.getTracks().forEach(function(track) {
-        track.stop();
-      });
-
-      _anneMicPermissionPending = false;
-      if (ANNE_STATE.micMode) {
-        startAnneRecognition();
-      }
-    })
-    .catch(function(error) {
-      _anneMicPermissionPending = false;
-      console.warn(
-        '[MIC] microphone device error:',
-        error && error.name,
-        error && error.message
-      );
-
-      var message =
-        error && error.name === 'NotFoundError'
-          ? 'No microphone was found on this device.'
-          : 'Microphone access failed. Check the browser site permission and the device microphone privacy setting.';
-
-      alert(message);
-      turnAnneMicOff();
-    });
-}
-
 // A passage sentence is a direct MIC navigation target. Capture the tap
 // before quiz/content handlers so a learner can repeat or skip reliably.
 document.addEventListener(
@@ -5805,7 +5758,7 @@ function turnAnneMicOn() {
   }
 
 
-  startAnneMicWithPermission();
+  startAnneRecognition();
 }
 
 
