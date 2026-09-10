@@ -65,7 +65,7 @@
       'Start microphone recognition',
 
     micStopButton:
-      'Stop recognition and score',
+      'Recognize spoken audio and score',
 
     chunkToggle:
       'Show or hide learning chunks',
@@ -1661,7 +1661,7 @@ window.addEventListener(
         if(stopButton){
 
           stopButton.innerHTML =
-            '<span>■ STOP</span>' +
+            '<span>■ RECOGNIZE</span>' +
             '<span class="gb-mic-score">' +
             score +
             '%</span>';

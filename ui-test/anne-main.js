@@ -4486,7 +4486,7 @@ function ensureAnneMicPanel() {
           cursor:pointer;
         "
       >
-        <span>■ STOP</span>
+        <span>■ RECOGNIZE</span>
 
         <span
           id="anneMicStopScore"
@@ -4946,6 +4946,177 @@ function positionAnneMicPanel() {
 
 
 // SUBBLOCK 1109
+// ============================================================
+// MIC에서 맞게 말한 단어 하이라이트
+// BIBLE과 같은 단어 단위 강조 방식으로, 난독증 학습의 시각 피드백을 유지한다.
+// ============================================================
+
+function highlightAnneMicWords(
+  sentence,
+  spokenText
+) {
+
+  if (!sentence) {
+    return;
+  }
+
+  var targetText =
+    normalizeAnneMicText(
+      sentence.text,
+      sentence.code
+    );
+
+  var visibleLines =
+    Array.from(
+      document.querySelectorAll(
+        '.anne-full-diary ' +
+        '.language-line[data-language="' +
+        sentence.code +
+        '"]'
+      )
+    );
+
+  var sentenceEl =
+    visibleLines.find(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        if (
+          rect.width <= 0 ||
+          rect.height <= 0
+        ) {
+          return false;
+        }
+
+        var lineText =
+          normalizeAnneMicText(
+            el.textContent,
+            sentence.code
+          );
+
+        return (
+          lineText ===
+          targetText
+        );
+      }
+    );
+
+  if (!sentenceEl) {
+    sentenceEl =
+      sentence.element;
+  }
+
+  if (!sentenceEl) {
+    return;
+  }
+
+  var original =
+    String(
+      sentenceEl.textContent || ''
+    );
+
+  var spoken =
+    String(
+      spokenText || ''
+    );
+
+  var originalWords =
+    original.match(/\S+/g) || [];
+
+  var spokenWords =
+    spoken.match(/\S+/g) || [];
+
+  var normalizedSpoken =
+    spokenWords.map(
+      function(word) {
+
+        return normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+      }
+    );
+
+  var used =
+    new Array(
+      normalizedSpoken.length
+    ).fill(false);
+
+  sentenceEl.innerHTML = '';
+
+  originalWords.forEach(
+    function(word, index) {
+
+      var normalizedWord =
+        normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+
+      var matchedIndex = -1;
+
+      for (
+        var i = 0;
+        i < normalizedSpoken.length;
+        i++
+      ) {
+
+        if (
+          !used[i] &&
+          normalizedWord &&
+          normalizedWord ===
+            normalizedSpoken[i]
+        ) {
+
+          matchedIndex = i;
+          break;
+        }
+      }
+
+      var span =
+        document.createElement(
+          'span'
+        );
+
+      span.textContent =
+        word;
+
+      if (
+        matchedIndex >= 0
+      ) {
+
+        used[matchedIndex] =
+          true;
+
+        span.style.background =
+          '#fde047';
+
+        span.style.borderRadius =
+          '3px';
+
+        span.style.padding =
+          '0 2px';
+      }
+
+      sentenceEl.appendChild(
+        span
+      );
+
+      if (
+        index <
+        originalWords.length - 1
+      ) {
+
+        sentenceEl.appendChild(
+          document.createTextNode(' ')
+        );
+      }
+    }
+  );
+}
+
 // ============================================================
 // MIC 인식 마감
 // 결과가 잠시 멈추면 recognition.onend에서 채점·자동 진행한다.
