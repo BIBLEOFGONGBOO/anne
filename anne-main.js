@@ -1062,71 +1062,154 @@ function saveLastSettings() {
 
 // SUBBLOCK 0402
 function setupHome() {
-    
-    if (_homeInitialized) {
-    console.log('[ANNE] setupHome 이미 실행됨, 중복 실행 방지');
+
+  if (_homeInitialized) {
+    console.log(
+      '[ANNE] setupHome 이미 실행됨, 중복 실행 방지'
+    );
     return;
   }
 
   _homeInitialized = true;
-  console.log('[ANNE] setupHome 실행');
 
-  document.documentElement.dataset.studyMode = 'study';
+  console.log(
+    '[ANNE] setupHome 실행'
+  );
 
-  var splash = document.getElementById('splashOverlay');
-  if (splash) splash.style.display = 'none';
 
-  var main = document.getElementById('mainContainer');
-  if (main) main.style.display = 'block';
+  document.documentElement.dataset.studyMode =
+    'study';
 
-  var quiz = document.getElementById('quizMain');
-  if (quiz) quiz.style.display = 'none';
 
-  var setup = document.getElementById('setupSection');
-  if (setup) setup.style.display = 'block';
+  var splash =
+    document.getElementById(
+      'splashOverlay'
+    );
 
-  var satTitle = document.querySelector('.sat-title');
+  if (splash) {
+    splash.style.display = 'none';
+  }
+
+
+  var main =
+    document.getElementById(
+      'mainContainer'
+    );
+
+  if (main) {
+    main.style.display = 'block';
+  }
+
+
+  var quiz =
+    document.getElementById(
+      'quizMain'
+    );
+
+  if (quiz) {
+    quiz.style.display = 'none';
+  }
+
+
+  var setup =
+    document.getElementById(
+      'setupSection'
+    );
+
+  if (setup) {
+    setup.style.display = 'block';
+  }
+
+
+  var satTitle =
+    document.querySelector(
+      '.sat-title'
+    );
+
   if (satTitle) {
     satTitle.innerHTML =
-      '<span id="currentSetTitle">  ANNE</span>';
+      '<span id="currentSetTitle">ANNE</span>';
   }
 
-  $('bibleExploreToggle').disabled = true;
-  $('biblePeopleToggle').disabled = true;
-  $('biblePassageToggle').disabled = true;
-  $('bibleQuizToggle').disabled = true;
 
-  var card = document.querySelector('.card-new');
+  var exploreBtn =
+    $('bibleExploreToggle');
+
+  if (exploreBtn) {
+    exploreBtn.disabled = true;
+  }
+
+
+  var peopleBtn =
+    $('biblePeopleToggle');
+
+  if (peopleBtn) {
+    peopleBtn.disabled = true;
+  }
+
+
+  var psgBtn =
+    $('biblePassageToggle');
+
+  if (psgBtn) {
+    psgBtn.disabled = true;
+  }
+
+
+  var qzBtn =
+    $('bibleQuizToggle');
+
+  if (qzBtn) {
+    qzBtn.disabled = true;
+  }
+
+
+  var card =
+    document.querySelector(
+      '.card-new'
+    );
+
 
   if (card) {
+
     card.innerHTML = `
-      <div class="card-icon">📖</div>
-      <div class="card-title card-title-new"
-           id="anneMainBtn"
-           style="cursor:pointer;">
-        ANNE - Quiz
+
+      <div
+        id="resumeQuickContainer"
+        class="resume-quick"
+        hidden
+      ></div>
+
+      <div class="card-icon">
+        📖
       </div>
-      <div id="licenseSetArea" hidden></div>
+
+      <div
+        class="card-title card-title-new"
+        id="anneMainBtn"
+      >
+        ANNE
+      </div>
+
+      <div
+        id="licenseSetArea"
+      ></div>
+
     `;
 
-    var anneBtn =
-      document.getElementById('anneMainBtn');
-
-    if (anneBtn) {
-      anneBtn.onclick = function() {
-        console.log('[ANNE] 📖 ANNE 버튼 클릭됨');
-        choose('anne');
-      };
-    }
   }
 
+
   var resume =
-    document.querySelector('.card-resume');
+    document.querySelector(
+      '.card-resume'
+    );
 
   if (resume) {
     resume.hidden = true;
     resume.style.display = 'none';
   }
+
 
   installLanguages();
   installModes();
@@ -1136,9 +1219,11 @@ function setupHome() {
   installSpeech();
   installAnneToggles();
 
+
   var savedSettings = {};
 
   try {
+
     var raw =
       localStorage.getItem(
         'gongboo.license.lastSettings'
@@ -1148,9 +1233,12 @@ function setupHome() {
       savedSettings =
         JSON.parse(raw);
     }
+
   } catch (e) {}
 
+
   if (savedSettings.mode) {
+
     var modeBtn =
       document.querySelector(
         '[data-ui-mode="' +
@@ -1161,151 +1249,191 @@ function setupHome() {
     if (modeBtn) {
       modeBtn.click();
     }
+
   }
 
-  if (savedSettings.firstLang) {
+
+  if (
+    savedSettings.firstLang &&
+    $('biblePrimaryTextSelector')
+  ) {
+
     $('biblePrimaryTextSelector').value =
       savedSettings.firstLang;
+
   }
 
-  if (savedSettings.secondLang) {
+
+  if (
+    savedSettings.secondLang &&
+    $('bibleSecondaryTextSelector')
+  ) {
+
     $('bibleSecondaryTextSelector').value =
       savedSettings.secondLang;
+
   }
 
+
   if (savedSettings.auto) {
+
     ANNE_STATE.auto = true;
 
     var autoBtn =
       $('licenseAuto');
 
     if (autoBtn) {
-      autoBtn.textContent = 'AUTO ON';
+
+      autoBtn.textContent =
+        'AUTO ON';
+
       autoBtn.setAttribute(
         'aria-pressed',
         'true'
       );
-      autoBtn.classList.add('active');
+
+      autoBtn.classList.add(
+        'active'
+      );
+
     }
+
   }
 
+
   if (savedSettings.micThreshold) {
+
     var thresholdInput =
       $('licenseMicThreshold');
 
     var thresholdLabel =
       $('licenseMicThresholdLabel');
 
+
     if (thresholdInput) {
+
       thresholdInput.value =
         savedSettings.micThreshold;
+
     }
+
 
     window.__micThreshold =
-      Number(savedSettings.micThreshold);
+      Number(
+        savedSettings.micThreshold
+      );
+
 
     if (thresholdLabel) {
+
       thresholdLabel.textContent =
-        savedSettings.micThreshold + '%';
+        savedSettings.micThreshold +
+        '%';
+
     }
+
   }
 
-  if (savedSettings.psgOn !== undefined) {
+
+  if (
+    savedSettings.psgOn !==
+    undefined
+  ) {
+
     ANNE_STATE.annePassageVisible =
       savedSettings.psgOn;
+
   }
 
-  if (savedSettings.qzOn !== undefined) {
+
+  if (
+    savedSettings.qzOn !==
+    undefined
+  ) {
+
     ANNE_STATE.anneQuizVisible =
       savedSettings.qzOn;
+
   }
+
 
   syncAnneToggleButtons();
   applyAnneVisibility();
 
-  var resumeContainer =
-    document.getElementById(
-      'resumeQuickContainer'
-    );
 
-  if (resumeContainer) {
-    if (
-      savedSettings.lastProduct &&
-      savedSettings.lastDate
-    ) {
-      resumeContainer.hidden = false;
-
-      resumeContainer.innerHTML = `
-        <div class="resume-badge"
-             onclick="resumeLastSession()">
-          <span class="count">
-            📖 ${savedSettings.lastProduct}
-          </span>
-          <span class="time">
-            📅 ${savedSettings.lastDate}
-          </span>
-          <span class="hint">
-            ▶ RESUME
-          </span>
-        </div>
-      `;
-    } else {
-      resumeContainer.hidden = true;
-      resumeContainer.innerHTML = '';
-    }
+  if (psgBtn) {
+    psgBtn.disabled = false;
   }
 
-  $('biblePassageToggle').disabled = false;
-  $('bibleQuizToggle').disabled = false;
+  if (qzBtn) {
+    qzBtn.disabled = false;
+  }
+
 
   saveLastSettings();
 
-  // ==========================================================
-  // CHUNK
-  // ==========================================================
 
   var helpBtn =
     document.getElementById(
       'bibleGuideToggle'
     );
 
+
   if (helpBtn) {
-    helpBtn.title = 'Chunk';
 
-    helpBtn.onclick = function() {
+    helpBtn.title =
+      'Chunk';
 
-      ANNE_STATE.anneChunkVisible =
-        !ANNE_STATE.anneChunkVisible;
+    helpBtn.onclick =
+      function() {
 
-      var container =
-        document.getElementById(
-          'chunkContainer'
+        ANNE_STATE.anneChunkVisible =
+          !ANNE_STATE.anneChunkVisible;
+
+
+        var container =
+          document.getElementById(
+            'chunkContainer'
+          );
+
+
+        if (container) {
+
+          container.style.display =
+            ANNE_STATE.anneChunkVisible
+              ? 'block'
+              : 'none';
+
+        }
+
+
+        this.classList.toggle(
+          'active',
+          ANNE_STATE.anneChunkVisible
         );
 
-      if (container) {
-        container.style.display =
-          ANNE_STATE.anneChunkVisible
-            ? 'block'
-            : 'none';
-      }
 
-      this.classList.toggle(
-        'active',
-        ANNE_STATE.anneChunkVisible
-      );
+        this.setAttribute(
+          'aria-pressed',
+          String(
+            ANNE_STATE.anneChunkVisible
+          )
+        );
 
-      this.setAttribute(
-        'aria-pressed',
-        String(
-          ANNE_STATE.anneChunkVisible
-        )
-      );
-    };
+      };
+
   }
 
-  console.log('[ANNE] ✅ setupHome 완료');
-}
 
+  console.log(
+    '[ANNE] ✅ setupHome complete'
+  );
+
+
+  // 날짜 목록을 초기 화면에서 즉시 로드
+  choose('anne');
+
+}
 
 // ============================================================
 // BLOCK 0500: anne-navigation.js
@@ -2060,12 +2188,6 @@ function syncAnneToggleButtons() {
     p.classList.toggle(
       'active',
       psgOn
-    );
-
-    p.style.setProperty(
-      'filter',
-      psgOn ? 'brightness(0.75)' : '',
-      'important'
     );
 
     p.style.setProperty(
@@ -3391,6 +3513,87 @@ var _anneMicRecognizeTimer = null;
 var _anneMicLastTranscript = '';
 var _anneMicCurrentRecognition = null;
 var _anneMicPassageIndex = 0;
+// A passage sentence is a direct MIC navigation target. Capture the tap
+// before quiz/content handlers so a learner can repeat or skip reliably.
+document.addEventListener(
+  'click',
+  function(event) {
+    var line =
+      event.target.closest(
+        '.anne-full-diary .language-line'
+      );
+
+    if (!line) {
+      return;
+    }
+
+    var langInfo =
+      getAnneMicLanguage();
+
+    if (
+      line.getAttribute('data-language') !==
+      langInfo.code
+    ) {
+      return;
+    }
+
+    var lines =
+      Array.from(
+        document.querySelectorAll(
+          '.anne-full-diary .language-line[data-language="' +
+          langInfo.code +
+          '"]'
+        )
+      ).filter(function(item) {
+        var rect = item.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0;
+      });
+
+    var index = lines.indexOf(line);
+    if (index < 0) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    _anneMicPassageIndex = index;
+    _anneMicLastTranscript = '';
+
+    lines.forEach(function(item, itemIndex) {
+      item.style.outline =
+        itemIndex === index
+          ? '2px solid #facc15'
+          : '';
+      item.style.outlineOffset =
+        itemIndex === index ? '2px' : '';
+      item.style.borderRadius =
+        itemIndex === index ? '4px' : '';
+      item.style.cursor = 'pointer';
+    });
+
+    if (_anneMicRecognizeTimer) {
+      clearTimeout(_anneMicRecognizeTimer);
+      _anneMicRecognizeTimer = null;
+    }
+
+    if (ANNE_STATE.micMode) {
+      _anneMicMoving = true;
+      if (ANNE_STATE.recognition) {
+        try {
+          ANNE_STATE.recognition.stop();
+        } catch (_) {}
+      }
+
+      window.setTimeout(function() {
+        _anneMicMoving = false;
+        if (ANNE_STATE.micMode) {
+          startAnneRecognition();
+        }
+      }, 180);
+    }
+  },
+  true
+);
 
 window.__micRecognizeDelay =
   Number(
@@ -3732,6 +3935,20 @@ function getCurrentMicSentence() {
   if (!text) {
     return null;
   }
+
+  document.querySelectorAll(
+    '.anne-passage .language-line'
+  ).forEach(function(el) {
+    el.style.outline = '';
+    el.style.outlineOffset = '';
+  });
+
+  sentenceEl.style.outline =
+    '2px solid #facc15';
+  sentenceEl.style.outlineOffset =
+    '2px';
+  sentenceEl.style.borderRadius =
+    '4px';
 
 
   return {
@@ -4263,7 +4480,7 @@ function ensureAnneMicPanel() {
           cursor:pointer;
         "
       >
-        <span>■ STOP</span>
+        <span>■ RECOGNIZE</span>
 
         <span
           id="anneMicStopScore"
@@ -4724,6 +4941,235 @@ function positionAnneMicPanel() {
 
 // SUBBLOCK 1109
 // ============================================================
+// MIC에서 맞게 말한 단어 하이라이트
+// BIBLE과 같은 단어 단위 강조 방식으로, 난독증 학습의 시각 피드백을 유지한다.
+// ============================================================
+
+function highlightAnneMicWords(
+  sentence,
+  spokenText
+) {
+
+  if (!sentence) {
+    return;
+  }
+
+  var targetText =
+    normalizeAnneMicText(
+      sentence.text,
+      sentence.code
+    );
+
+  var visibleLines =
+    Array.from(
+      document.querySelectorAll(
+        '.anne-full-diary ' +
+        '.language-line[data-language="' +
+        sentence.code +
+        '"]'
+      )
+    );
+
+  var sentenceEl =
+    visibleLines.find(
+      function(el) {
+
+        var rect =
+          el.getBoundingClientRect();
+
+        if (
+          rect.width <= 0 ||
+          rect.height <= 0
+        ) {
+          return false;
+        }
+
+        var lineText =
+          normalizeAnneMicText(
+            el.textContent,
+            sentence.code
+          );
+
+        return (
+          lineText ===
+          targetText
+        );
+      }
+    );
+
+  if (!sentenceEl) {
+    sentenceEl =
+      sentence.element;
+  }
+
+  if (!sentenceEl) {
+    return;
+  }
+
+  var original =
+    String(
+      sentenceEl.textContent || ''
+    );
+
+  var spoken =
+    String(
+      spokenText || ''
+    );
+
+  var originalWords =
+    original.match(/\S+/g) || [];
+
+  var spokenWords =
+    spoken.match(/\S+/g) || [];
+
+  var normalizedSpoken =
+    spokenWords.map(
+      function(word) {
+
+        return normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+      }
+    );
+
+  var used =
+    new Array(
+      normalizedSpoken.length
+    ).fill(false);
+
+  sentenceEl.innerHTML = '';
+
+  originalWords.forEach(
+    function(word, index) {
+
+      var normalizedWord =
+        normalizeAnneMicText(
+          word,
+          sentence.code
+        );
+
+      var matchedIndex = -1;
+
+      for (
+        var i = 0;
+        i < normalizedSpoken.length;
+        i++
+      ) {
+
+        if (
+          !used[i] &&
+          normalizedWord &&
+          normalizedWord ===
+            normalizedSpoken[i]
+        ) {
+
+          matchedIndex = i;
+          break;
+        }
+      }
+
+      var span =
+        document.createElement(
+          'span'
+        );
+
+      span.textContent =
+        word;
+
+      if (
+        matchedIndex >= 0
+      ) {
+
+        used[matchedIndex] =
+          true;
+
+        span.style.background =
+          '#fde047';
+
+        span.style.borderRadius =
+          '3px';
+
+        span.style.padding =
+          '0 2px';
+      }
+
+      sentenceEl.appendChild(
+        span
+      );
+
+      if (
+        index <
+        originalWords.length - 1
+      ) {
+
+        sentenceEl.appendChild(
+          document.createTextNode(' ')
+        );
+      }
+    }
+  );
+}
+
+// ============================================================
+// MIC 인식 마감
+// 결과가 잠시 멈추면 recognition.onend에서 채점·자동 진행한다.
+// BIBLE의 검증된 흐름과 동일하게 stop만 요청하고, onend를 지우지 않는다.
+// ============================================================
+
+function finalizeAnneMicRecognition(
+  manualButton
+) {
+
+  if (_anneMicRecognizeTimer) {
+
+    clearTimeout(
+      _anneMicRecognizeTimer
+    );
+
+    _anneMicRecognizeTimer =
+      null;
+  }
+
+  var recognition =
+    ANNE_STATE.recognition;
+
+  if (!recognition) {
+    return;
+  }
+
+  var scoreEl =
+    document.getElementById(
+      'anneMicScore'
+    );
+
+  if (scoreEl) {
+
+    scoreEl.textContent =
+      manualButton
+        ? 'Recognizing...'
+        : 'Checking...';
+
+    scoreEl.style.color =
+      '#2563eb';
+  }
+
+  try {
+
+    recognition.stop();
+
+  } catch (e) {
+
+    console.warn(
+      '[MIC] finalize stop failed:',
+      e
+    );
+  }
+}
+
+// ============================================================
+// SUBBLOCK 1109
+// ============================================================
 // MIC 결과 표시
 // 실제 값은 hidden score에 기록
 // 1107이 STOP 버튼 오른쪽에 % 표시
@@ -4811,8 +5257,16 @@ function startAnneRecognition() {
   if (!SpeechRecognition) {
 
     alert(
-      'Chrome 또는 Edge 브라우저에서 마이크 기능을 사용해 주세요.'
+      'Please use microphone recognition in Chrome or Edge.'
     );
+
+    ANNE_STATE.micMode = false;
+    if (
+      typeof window.gongbooSetMicActive ===
+      'function'
+    ) {
+      window.gongbooSetMicActive(false);
+    }
 
     return;
   }
@@ -5004,7 +5458,7 @@ function startAnneRecognition() {
       ) {
 
         alert(
-          '브라우저에서 마이크 사용 권한을 허용해 주세요.'
+          'Please allow microphone access in your browser.'
         );
 
         turnAnneMicOff();
@@ -5445,6 +5899,8 @@ function startAnneRecognition() {
       '[MIC] 시작 실패:',
       e
     );
+
+    turnAnneMicOff();
   }
 }
 
@@ -5462,11 +5918,6 @@ function turnAnneMicOn() {
     );
 
 
-  if (!btn) {
-    return;
-  }
-
-
   // 컴퓨터 TTS 중지
   if (
     typeof stopSpeech ===
@@ -5480,26 +5931,31 @@ function turnAnneMicOn() {
 
   ANNE_STATE.micMode =
     true;
-  _anneMicPassageIndex = 0;
+  if (
+    typeof window.gongbooSetMicActive ===
+    'function'
+  ) {
+    window.gongbooSetMicActive(true);
+  }
+  getCurrentMicSentence();
 
 
-  btn.classList.add(
-    'active'
-  );
+  if (btn) {
+    btn.classList.add(
+      'active'
+    );
 
+    btn.setAttribute(
+      'aria-pressed',
+      'true'
+    );
 
-  btn.setAttribute(
-    'aria-pressed',
-    'true'
-  );
+    btn.style.filter =
+      'brightness(0.75)';
 
-
-  btn.style.filter =
-    'brightness(0.75)';
-
-
-  btn.style.fontWeight =
-    '700';
+    btn.style.fontWeight =
+      '700';
+  }
 
 
   var panel =
@@ -5509,8 +5965,10 @@ function turnAnneMicOn() {
   positionAnneMicPanel();
 
 
-  panel.style.display =
-    'block';
+  if (panel) {
+    panel.style.display =
+      'block';
+  }
 
 
   if (
@@ -5536,6 +5994,12 @@ function turnAnneMicOff() {
 
   ANNE_STATE.micMode =
     false;
+  if (
+    typeof window.gongbooSetMicActive ===
+    'function'
+  ) {
+    window.gongbooSetMicActive(false);
+  }
 
 
   _anneMicMoving =
@@ -6321,6 +6785,12 @@ function stopSpeech() {
   }
   _isSpeaking =
     false;
+  if (
+    typeof window.gongbooSetPlayActive ===
+    'function'
+  ) {
+    window.gongbooSetPlayActive(false);
+  }
   _currentUtterance =
     null;
   _utteranceRefs =
@@ -6367,7 +6837,7 @@ function speakWithDyslexiaSupport() {
     !('speechSynthesis' in window)
   ) {
     alert(
-      '이 브라우저는 음성 읽기를 지원하지 않습니다.'
+      'This browser does not support speech playback.'
     );
     return;
   }
@@ -6378,6 +6848,12 @@ function speakWithDyslexiaSupport() {
       '[TTS] 화면에 읽을 문장이 없음'
     );
     return;
+  }
+  if (
+    typeof window.gongbooSetPlayActive ===
+    'function'
+  ) {
+    window.gongbooSetPlayActive(true);
   }
   var runId =
     ++_speechRunId;
@@ -6419,6 +6895,12 @@ function readTextsWithHighlight(
     );
     _isSpeaking = false;
     _currentUtterance = null;
+    if (
+      typeof window.gongbooSetPlayActive ===
+      'function'
+    ) {
+      window.gongbooSetPlayActive(false);
+    }
     if (
       window.__licenseSpeechState
     ) {
@@ -7202,3 +7684,17 @@ if (
     100
   );
 }
+
+// Template v2 product adapter. The common UI calls this small contract;
+// ANNE keeps all learning, highlighting, TTS, and MIC behavior here.
+window.GongbooTemplateAdapter = {
+  startPlay: speakWithDyslexiaSupport,
+  stopPlay: stopSpeech,
+  startMic: turnAnneMicOn,
+  stopMic: turnAnneMicOff,
+  finalizeMic: finalizeAnneMicRecognition
+};
+
+// Public bridge used by the shared Template UI and console diagnostics.
+window.finalizeAnneMicRecognition =
+  finalizeAnneMicRecognition;
