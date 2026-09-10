@@ -2191,12 +2191,6 @@ function syncAnneToggleButtons() {
     );
 
     p.style.setProperty(
-      'filter',
-      psgOn ? 'brightness(0.75)' : '',
-      'important'
-    );
-
-    p.style.setProperty(
       'font-weight',
       psgOn ? '700' : '',
       'important'
