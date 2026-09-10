@@ -1,8 +1,6 @@
 <!-- SUBBLOCK 0000 : DOCUMENT / HEAD -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="UTF-8" />
@@ -13,7 +11,7 @@
   />
 
   <title>
-    GONGBOO EASY LEARNING
+    GONGBOO CONVERSATION
   </title>
 
   <link
@@ -43,8 +41,6 @@
 
 
 
-
-        
        <!-- SUBBLOCK 0500 : SYSTEM -->
 
 <div class="gb-card-wrap">
@@ -55,7 +51,7 @@
     type="button"
     aria-expanded="false"
   >
-    EAS
+    CON
     <span class="gb-chevron">▼</span>
   </button>
 
@@ -70,8 +66,9 @@
     </div>
 
     <button
-      class="gb-system-option"
+      class="gb-system-option is-active"
       type="button"
+      aria-current="page"
       onclick="window.location.href='https://bibleofgongboo.github.io/conversation/'"
     >
       <span class="gb-system-code">CON</span>
@@ -88,9 +85,8 @@
     </button>
 
     <button
-      class="gb-system-option is-active"
+      class="gb-system-option"
       type="button"
-      aria-current="page"
     >
       <span class="gb-system-code">EAS</span>
       <span class="gb-system-name">EASY LEARNING</span>
@@ -395,6 +391,7 @@
               class="gb-card-toggle"
               type="button"
               aria-pressed="true"
+              disabled
             >
               QUIZ
             </button>
@@ -434,6 +431,7 @@
         class="gb-mode-button mode-btn mode-learn"
         type="button"
         data-ui-mode="learn"
+        disabled
       >
         LRN
       </button>
@@ -442,6 +440,7 @@
         class="gb-mode-button mode-btn mode-study"
         type="button"
         data-ui-mode="study"
+        disabled
       >
         STD
       </button>
@@ -450,6 +449,7 @@
         class="gb-mode-button mode-btn mode-exam"
         type="button"
         data-ui-mode="exam"
+        disabled
       >
         EXM
       </button>
@@ -706,7 +706,7 @@
 <!-- SUBBLOCK 4500 : SCRIPT LOAD / PAGE CLOSE -->
 
 <script src="./gongboo-ui.js?v=template2-12"></script>
-<script src="./anne-main.js?v=template2-12"></script>
+<script src="./conversation-main.js?v=template2-12"></script>
 
 </body>
 </html>
