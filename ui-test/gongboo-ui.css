@@ -446,6 +446,28 @@ button{
   margin-top:8px;
 }
 
+.gb-psg-card{
+  width:180px;
+}
+
+.gb-card-toggle{
+  width:100%;
+  min-height:40px;
+  border:1px solid var(--gb-border);
+  border-radius:8px;
+  background:#ffffff;
+  color:#222222;
+  font-size:12px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.gb-card-toggle[aria-pressed="true"]{
+  color:var(--gb-accent-strong);
+  border-color:var(--gb-accent);
+  background:var(--gb-accent-soft);
+}
+
 .gb-two-actions,
 .gb-one-action{
   display:grid;
@@ -1155,7 +1177,7 @@ button{
     display:grid;
 
     grid-template-columns:
-      .9fr .68fr .82fr 1.18fr 1.05fr .78fr .52fr;
+      .9fr .82fr 1.18fr 1.05fr 1fr .52fr;
 
     gap:4px;
   }
@@ -1258,7 +1280,7 @@ button{
 
   .gb-toolbar{
     grid-template-columns:
-      .88fr .66fr .78fr 1.18fr 1.02fr .74fr .5fr;
+      .88fr .78fr 1.18fr 1.02fr .96fr .5fr;
 
     gap:3px;
   }

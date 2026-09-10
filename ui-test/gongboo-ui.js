@@ -7,6 +7,7 @@
     ['langButton','langCard'],
     ['playMenuButton','playCard'],
     ['micMenuButton','micCard'],
+    ['psgMenuButton','psgCard'],
     ['moreButton','moreCard']
   ];
 
@@ -18,8 +19,14 @@
     systemButton:
       'Select learning system',
 
-    psgButton:
+    biblePassageToggle:
       'Show or hide the full scenario',
+
+    psgMenuButton:
+      'Passage and quiz settings',
+
+    bibleQuizToggle:
+      'Show or hide the quiz',
 
     langButton:
       'Language settings',
@@ -568,7 +575,9 @@ if(playStopButton){
         }
 
         var running =
-          isMicRunning;
+          micButton.getAttribute(
+            'aria-pressed'
+          ) === 'true';
 
         var adapter =
           window.GongbooTemplateAdapter || {};

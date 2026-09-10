@@ -3945,6 +3945,20 @@ function getCurrentMicSentence() {
     return null;
   }
 
+  document.querySelectorAll(
+    '.anne-passage .language-line'
+  ).forEach(function(el) {
+    el.style.outline = '';
+    el.style.outlineOffset = '';
+  });
+
+  sentenceEl.style.outline =
+    '2px solid #facc15';
+  sentenceEl.style.outlineOffset =
+    '2px';
+  sentenceEl.style.borderRadius =
+    '4px';
+
 
   return {
 
@@ -5023,8 +5037,16 @@ function startAnneRecognition() {
   if (!SpeechRecognition) {
 
     alert(
-      'Chrome 또는 Edge 브라우저에서 마이크 기능을 사용해 주세요.'
+      'Please use microphone recognition in Chrome or Edge.'
     );
+
+    ANNE_STATE.micMode = false;
+    if (
+      typeof window.gongbooSetMicActive ===
+      'function'
+    ) {
+      window.gongbooSetMicActive(false);
+    }
 
     return;
   }
@@ -5216,7 +5238,7 @@ function startAnneRecognition() {
       ) {
 
         alert(
-          '브라우저에서 마이크 사용 권한을 허용해 주세요.'
+          'Please allow microphone access in your browser.'
         );
 
         turnAnneMicOff();
@@ -5657,6 +5679,8 @@ function startAnneRecognition() {
       '[MIC] 시작 실패:',
       e
     );
+
+    turnAnneMicOff();
   }
 }
 
@@ -5672,11 +5696,6 @@ function turnAnneMicOn() {
     document.getElementById(
       'anneMicButton'
     );
-
-
-  if (!btn) {
-    return;
-  }
 
 
   // 컴퓨터 TTS 중지
@@ -5701,23 +5720,22 @@ function turnAnneMicOn() {
   _anneMicPassageIndex = 0;
 
 
-  btn.classList.add(
-    'active'
-  );
+  if (btn) {
+    btn.classList.add(
+      'active'
+    );
 
+    btn.setAttribute(
+      'aria-pressed',
+      'true'
+    );
 
-  btn.setAttribute(
-    'aria-pressed',
-    'true'
-  );
+    btn.style.filter =
+      'brightness(0.75)';
 
-
-  btn.style.filter =
-    'brightness(0.75)';
-
-
-  btn.style.fontWeight =
-    '700';
+    btn.style.fontWeight =
+      '700';
+  }
 
 
   var panel =
@@ -5727,8 +5745,10 @@ function turnAnneMicOn() {
   positionAnneMicPanel();
 
 
-  panel.style.display =
-    'block';
+  if (panel) {
+    panel.style.display =
+      'block';
+  }
 
 
   if (

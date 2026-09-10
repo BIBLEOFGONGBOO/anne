@@ -18,7 +18,7 @@
 
   <link
     rel="stylesheet"
-    href="./gongboo-ui.css?v=template2-2"
+    href="./gongboo-ui.css?v=template2-4"
   />
 
   <link
@@ -354,26 +354,40 @@
         </div>
 
 
-        <!-- SUBBLOCK 2700 : PSG -->
-        <button
-          id="biblePassageToggle"
-          class="gb-tool-button"
-          type="button"
-          aria-pressed="false"
-        >
-          PSG
-        </button>
+        <!-- SUBBLOCK 2700 : PSG / QUIZ -->
+        <div class="gb-card-wrap gb-split-wrap">
+          <div class="gb-split-control">
+            <button
+              id="biblePassageToggle"
+              class="gb-tool-button gb-split-primary"
+              type="button"
+              aria-pressed="false"
+            >
+              PSG
+            </button>
+            <button
+              id="psgMenuButton"
+              class="gb-tool-button gb-split-menu"
+              type="button"
+              aria-expanded="false"
+              aria-controls="psgCard"
+            >
+              <span aria-hidden="true">▼</span>
+            </button>
+          </div>
 
-
-        <!-- SUBBLOCK 2750 : QUIZ VISIBILITY -->
-        <button
-          id="bibleQuizToggle"
-          class="gb-tool-button"
-          type="button"
-          aria-pressed="true"
-        >
-          QUIZ
-        </button>
+          <div id="psgCard" class="gb-card gb-psg-card" hidden>
+            <div class="gb-card-title">PASSAGE</div>
+            <button
+              id="bibleQuizToggle"
+              class="gb-card-toggle"
+              type="button"
+              aria-pressed="true"
+            >
+              QUIZ
+            </button>
+          </div>
+        </div>
 
 
         <!-- SUBBLOCK 3000 : MORE / MODE -->
@@ -676,8 +690,8 @@
   
 <!-- SUBBLOCK 4500 : SCRIPT LOAD / PAGE CLOSE -->
 
-<script src="./gongboo-ui.js?v=template2-2"></script>
-<script src="./anne-main.js?v=template2-2"></script>
+<script src="./gongboo-ui.js?v=template2-4"></script>
+<script src="./anne-main.js?v=template2-4"></script>
 
 </body>
 </html>
